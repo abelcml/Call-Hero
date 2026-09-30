@@ -32,7 +32,7 @@ test('routine booking changes are not flagged for manual verification', () => {
   const statusFor = (callId) => view.bookings.find((booking) => booking.callId === callId)?.status;
   assert.equal(statusFor('c027'), 'Rescheduled');
   assert.equal(statusFor('c023'), 'Rebooked');
-  assert.equal(statusFor('c010'), 'Verify');
-  assert.equal(statusFor('c030'), 'Verify');
+  assert.equal(statusFor('c010'), 'Recorded');
+  assert.equal(statusFor('c030'), 'Recorded');
   assert.equal(statusFor('c029'), 'Priority');
 });

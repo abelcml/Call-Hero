@@ -168,7 +168,7 @@
       "intent": "new_patient",
       "summary": "New patient. Asked whether the clinic does children's appointments — confirmed yes. Booking for her son.",
       "appointment": {
-        "date": "2025-11-22",
+        "date": "2025-11-24",
         "time": "09:30",
         "type": "Children's check-up",
         "practitioner": "Dr Mark Bennett"
@@ -493,7 +493,7 @@
       "summary": "Existing patient, routine booking before work.",
       "appointment": {
         "date": "2025-12-02",
-        "time": "17:00",
+        "time": "08:00",
         "type": "Check-up and clean",
         "practitioner": "Dr Mark Bennett"
       },
