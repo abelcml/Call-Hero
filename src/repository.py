@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from dataclasses import replace
 from typing import Protocol
 
 from src.domain import DerivedBatch
@@ -22,6 +23,11 @@ class InMemoryRepository:
         self._batches: dict[str, DerivedBatch] = {}
 
     def save_batch(self, batch: DerivedBatch) -> None:
+        existing = self._batches.get(batch.clinic.id)
+        if existing:
+            work_items = {item.id: item for item in existing.work_items}
+            work_items.update({item.id: item for item in batch.work_items})
+            batch = replace(batch, work_items=tuple(work_items.values()))
         self._batches[batch.clinic.id] = batch
 
     def list_booking_overview(self, clinic_id: str) -> list[dict]:

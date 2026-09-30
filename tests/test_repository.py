@@ -87,6 +87,9 @@ def test_first_screen_counts_only_open_related_work_items() -> None:
 
     assert repository.list_booking_overview(batch.clinic.id)[0]["related_work_item_count"] == 1
 
+    ingest_payload(_payload(), repository)
+    assert repository.list_booking_overview(batch.clinic.id)[0]["related_work_item_count"] == 1
+
 
 class _Response:
     data: list[dict] = []
