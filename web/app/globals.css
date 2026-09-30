@@ -520,13 +520,19 @@ kbd {
 .mon-check input { width: 20px; height: 20px; accent-color: var(--accent-solid); }
 .mon-side { display: flex; flex-direction: column; gap: 14px; }
 .mon-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 14px 16px; }
+.mon-recovery { border-top: 3px solid var(--accent-solid); }
+.mon-recovery-intro { margin: 0 0 14px; color: var(--text-2); font-size: 13px; line-height: 1.5; }
+.mon-recovery-sub { margin: 14px 0 8px; padding-top: 12px; border-top: 1px solid var(--border); color: var(--text-2); font-size: 12px; font-weight: 700; }
+.mon-recovery-sub:first-of-type { margin-top: 0; padding-top: 0; border: 0; }
 .mon-slots { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
 .mon-slots li { border-left: 3px solid var(--info-bd); padding-left: 10px; font-size: 13px; }
 .mon-slot-t strong { color: var(--text); }
 .mon-slot-f { color: var(--muted); font-size: 12px; }
-.mon-slot-s { color: var(--ok); font-weight: 500; }
-.mon-slot-s b { color: var(--text); }
-.mon-slot-s.none { color: var(--muted); }
+.mon-candidates { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.mon-candidates li { display: grid; gap: 3px; padding: 9px 10px; border-radius: var(--r); background: var(--surface-2); border: 1px solid var(--border); }
+.mon-candidate-name { color: var(--text); font-size: 13px; font-weight: 700; }
+.mon-candidate-reason { color: var(--muted); font-size: 12px; }
+.mon-recovery-rule { margin: 14px 0 0; padding: 9px 10px; border-radius: var(--r); background: var(--accent-soft); color: var(--text-2); font-size: 12px; line-height: 1.5; }
 .mon-found { margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--text-2); }
 .mon-found b { color: var(--text); }
 .mon-none { font-size: 13px; color: var(--muted); }

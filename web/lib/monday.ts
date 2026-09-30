@@ -41,7 +41,6 @@ export interface ActionItem {
   doThis: string;
   person: Person;
   callIds: string[];
-  slot?: Slot;
   /** Non-clinical detail that stays hidden until revealed: call IDs, times, outcomes. Never call summaries. */
   private?: string[];
   recordingAvailable: boolean;
@@ -58,7 +57,7 @@ export interface CallRow {
   outcome: string; missing: string[];
 }
 
-export interface Slot { date: string; time: string; practitioner?: string; label: string; freedBy: string; freedByCallId: string; suggestedNote?: string }
+export interface Slot { date: string; time: string; practitioner?: string; label: string; freedBy: string; freedByCallId: string }
 
 export type BookingStatus = 'Recorded' | 'Verify' | 'Priority' | 'Practitioner note';
 export interface Booking {
@@ -83,10 +82,11 @@ export interface MondayView {
   clinic: string;
   nowLabel: string;
   actions: ActionItem[];
-  openSlots: (Slot & { suggestedFor?: string })[];
+  candidateActions: ActionItem[];
+  potentialOpenSlots: Slot[];
   bookings: Booking[];
   calls: CallRow[];
-  counts: { total: number; booked: number; newPatientsBooked: number; cancelled: number; openSlots: number; needAction: number; noAction: number };
+  counts: { total: number; booked: number; newPatientsBooked: number; cancelled: number; potentialOpenSlots: number; needAction: number; noAction: number };
   leftOut: { label: string; count: number; ids: string[] }[];
   dataIssues: string[];
   recordingsAvailable: boolean;
@@ -193,8 +193,6 @@ function callTrail(cs: WeekendCall[], wd: (d: string) => number, extra?: string[
   return [...cs.map((c) => `${c.id} · ${timeOfCall(c.started_at, wd)} · ${OUTCOME_WORDS[c.outcome] ?? c.outcome.replace(/_/g, ' ')}${c.duration_seconds != null ? ' · ' + dur(c.duration_seconds) : ''}`), ...(extra ?? [])];
 }
 const apptType = (t?: string) => (t && /emergency/i.test(t) ? 'Priority assessment' : t);
-const by = (s: { freedBy: string }) => (s.freedBy.includes('if moved') ? `${s.freedBy.replace(' (if moved)', '')} may free it` : `${s.freedBy} cancelled it`);
-const CHECK = 'likely free — check the diary';
 const drShort = (p?: string) => (p ? p.replace(/^Dr\s+\w+\s+/, 'Dr ') : undefined);
 
 // ---------- main ----------
@@ -217,9 +215,9 @@ export function buildMonday(data: WeekendData): MondayView {
   const bookedLater = (c: WeekendCall) =>
     (byNumber.get(c.caller_number ?? '') ?? []).find((o) => o.started_at > c.started_at && o.outcome === 'booked');
 
-  // 1) Open slots: cancellations nobody else has taken.
+  // Cancellation records alone cannot establish live diary availability.
   const booked = calls.filter((c) => c.outcome === 'booked' && c.appointment);
-  const openSlots: (Slot & { suggestedFor?: string })[] = calls
+  const potentialOpenSlots: Slot[] = calls
     .filter((c) => c.appointment?.action === 'cancelled')
     .filter((c) => !booked.some((b) => b.appointment!.date === c.appointment!.date && b.appointment!.time === c.appointment!.time && b.appointment!.practitioner === c.appointment!.practitioner))
     .filter((c) => c.appointment!.date >= today)
@@ -228,20 +226,16 @@ export function buildMonday(data: WeekendData): MondayView {
       label: slotLabel(c.appointment!.date, c.appointment!.time, wd, today), freedBy: firstName(c.caller_name), freedByCallId: c.id,
     }))
     .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
-  const freeSlots = [...openSlots];
-  const takeSlot = (who: string, note?: string) => { const s = freeSlots.shift(); if (s) { const o = openSlots.find((x) => x === s)!; o.suggestedFor = who; o.suggestedNote = note; } return s; };
-
-  // 2) Urgent, unbooked -> earliest open slot.
+  // 2) Urgent, unbooked -> human callback, without claiming an appointment fit.
   for (const c of calls.filter((c) => (c.flagged === 'urgent' || c.intent === 'urgent') && !bookedLater(c) && c.outcome !== 'booked')) {
-    const s = takeSlot(firstName(c.caller_name));
     const night = +c.started_at.slice(11, 13) < 6;
     actions.push({
       id: 'a-' + c.id, category: 'urgent', person: person(c), callIds: [c.id], recordingAvailable: rec([c]),
       timeLabel: timeOfCall(c.started_at, wd),
       title: `Call ${firstName(c.caller_name)} — urgent`,
       why: `Rang ${night ? 'overnight ' : ''}at ${timeOfCall(c.started_at, wd)}; flagged urgent, no appointment yet.`,
-      doThis: s ? `Check the diary, then offer ${s.label}${s.practitioner ? ' with ' + drShort(s.practitioner) : ''} (${by(s)}).` : 'Call back first, then check the diary for the earliest time.',
-      slot: s, private: callTrail([c], wd),
+      doThis: 'Call back first. Check urgency with the practitioner and confirm a suitable time in the live diary.',
+      private: callTrail([c], wd),
     });
     handled.add(c.id);
   }
@@ -280,47 +274,20 @@ export function buildMonday(data: WeekendData): MondayView {
     }
   }
 
-  // 6) Repeat callers who only got a later slot than they wanted -> offer an earlier one.
-  for (const [, cs] of byNumber) {
-    if (cs.length < 3 && !cs.every((x) => x.repeat_caller)) continue;
-    const fails = cs.filter((x) => x.outcome === 'no_availability');
-    const b = cs.find((x) => x.outcome === 'booked');
-    if (!fails.length || !b || handled.has(b.id)) continue;
-    const s = freeSlots.find((sl) => (sl.date + sl.time) < (b.appointment!.date + b.appointment!.time));
-    if (s) {
-      freeSlots.splice(freeSlots.indexOf(s), 1); openSlots.find((x) => x === s)!.suggestedFor = firstName(b.caller_name);
-      // Moving them up frees their original slot for the next person waiting.
-      const a = b.appointment!;
-      const freed = { date: a.date, time: a.time, practitioner: a.practitioner, label: slotLabel(a.date, a.time, wd, today), freedBy: firstName(b.caller_name) + ' (if moved)', freedByCallId: b.id };
-      openSlots.push(freed); freeSlots.push(freed);
-      freeSlots.sort((x, y) => (x.date + x.time).localeCompare(y.date + y.time));
-    }
-    actions.push({
-      id: 'a-' + b.id, category: 'optional', person: person(b), callIds: cs.map((x) => x.id), recordingAvailable: rec(cs),
-      timeLabel: timeOfCall(b.started_at, wd),
-      title: `Optional: offer earlier slot — ${firstName(b.caller_name)}`,
-      why: `Rang ${cs.length}× to get in sooner; already booked. Settled for ${slotLabel(b.appointment!.date, b.appointment!.time, wd, today)} after ${fails.length} failed attempts. Nice to offer, not a must-do.`,
-      doThis: s ? `Check the diary, then offer to move them up to ${s.label} (${by(s)}).` : 'Keep them on the list for an earlier slot.',
-      slot: s, private: callTrail(cs, wd),
-    });
-    cs.forEach((x) => handled.add(x.id));
-  }
-
-  // 5) Lost / waiting new patients -> remaining open slots.
+  // 5) Lost / waiting new patients -> confirm their constraints before matching.
   const unbookedDemand = calls.filter((c) => c.outcome === 'no_availability' && !bookedLater(c));
   const seen = new Set<string>();
   for (const c of unbookedDemand.sort((a, b) => (a.flagged === 'lost_opportunity' ? -1 : 0) - (b.flagged === 'lost_opportunity' ? -1 : 0))) {
     const key = c.caller_number ?? c.id; if (seen.has(key)) continue; seen.add(key);
     const cs = byNumber.get(c.caller_number ?? '') ?? [c];
     const lost = cs.some((x) => x.flagged === 'lost_opportunity');
-    const s = takeSlot(firstName(c.caller_name), 'availability unknown');
     actions.push({
       id: 'a-' + c.id, category: 'win_back', person: person(c), callIds: cs.map((x) => x.id), recordingAvailable: rec(cs),
       timeLabel: timeOfCall(cs[cs.length - 1].started_at, wd),
       title: lost ? `Win back ${firstName(c.caller_name)} — said "I'll try somewhere else"` : `${firstName(c.caller_name)} — ${cs.length > 1 ? `rang ${cs.length}×, ` : ''}no appointment${cs.some((x) => x.flagged === 'waitlist_requested') ? ', asked for waitlist' : ''}`,
       why: lost ? 'New patient who wanted to be seen this week. Nobody has followed up.' : 'New patient who couldn’t get a time that suited.',
-      doThis: s ? `Check the diary, then offer ${s.label}${s.practitioner ? ' with ' + drShort(s.practitioner) : ''} (${by(s)}).` : 'Add to the waitlist and call when a slot opens.',
-      slot: s, private: callTrail(cs, wd),
+      doThis: 'Call to confirm days, time window and clinician flexibility; then check the live diary and offer only a suitable opening.',
+      private: callTrail(cs, wd),
     });
     cs.forEach((x) => handled.add(x.id));
   }
@@ -424,6 +391,7 @@ export function buildMonday(data: WeekendData): MondayView {
     group('Hung up before saying anything', (c) => c.outcome === 'hung_up'),
     group('Wrong number', (c) => c.outcome === 'wrong_number'),
     group('Cancelled, then rebooked themselves', (c) => c.outcome === 'cancelled' && !!bookedLater(c)),
+    group('Availability enquiries later booked', (c) => c.outcome === 'no_availability' && !!bookedLater(c)),
   ];
   const coveredOut = new Set(leftOut.flatMap((g) => g.ids));
   const other = rest.filter((c) => !coveredOut.has(c.id));
@@ -434,7 +402,8 @@ export function buildMonday(data: WeekendData): MondayView {
     clinic: data.clinic.name,
     nowLabel: `${DAYS[wd(today)]} ${+today.slice(8, 10)} ${new Date(today + 'T12:00:00Z').toLocaleString('en-AU', { month: 'short', timeZone: 'UTC' })}, ${slotLabel(today, data.period.to.slice(11, 16), wd, '').split(' ').pop()}`,
     actions: ranked,
-    openSlots,
+    candidateActions: ranked.filter((a) => a.category === 'win_back'),
+    potentialOpenSlots,
     bookings,
     calls: calls.map((c) => {
       const f = formatAU(c.caller_number);
@@ -446,7 +415,7 @@ export function buildMonday(data: WeekendData): MondayView {
       booked: bookedCount,
       newPatientsBooked: booked.filter((c) => c.intent === 'new_patient').length,
       cancelled: calls.filter((c) => c.outcome === 'cancelled').length,
-      openSlots: openSlots.filter((s) => !s.freedBy.includes('if moved')).length,
+      potentialOpenSlots: potentialOpenSlots.length,
       needAction: ranked.filter((a) => a.category !== 'note' && a.category !== 'optional').length,
       noAction: leftOut.reduce((n, g) => n + g.count, 0),
     },

@@ -47,7 +47,7 @@ export default function MondayScreen({ raw }: { raw: WeekendData }) {
     const calls = empty ? [] : raw.calls.map((c, i) => ({ ...c, recording_available: noRec ? false : c.recording_available, caller_name: noNames && i % 2 === 0 ? null : c.caller_name }));
     return buildMonday({ ...raw, calls });
   }, [raw, noRec, noNames, empty]);
-  const { actions, bookings, calls, openSlots, dataIssues } = view;
+  const { actions, bookings, calls, potentialOpenSlots, dataIssues } = view;
 
   const st = (id: string): Status => statuses[id] ?? 'new';
   const setStatus = useCallback((id: string, s: Status) => setStatuses((m) => ({ ...m, [id]: s })), []);
@@ -98,7 +98,7 @@ export default function MondayScreen({ raw }: { raw: WeekendData }) {
       </header>
 
       <main className="wrap mon-main" id="main">
-        {loc.view === 'appointments' && <Appointments {...ctx} first={first} moreCount={Math.max(0, openMust.length - 1)} sel={loc.id} slots={openSlots} others={actions.filter((a) => a !== first && st(a.id) !== 'handled')} />}
+        {loc.view === 'appointments' && <Appointments {...ctx} first={first} moreCount={Math.max(0, openMust.length - 1)} sel={loc.id} slots={potentialOpenSlots} others={actions.filter((a) => a !== first && st(a.id) !== 'handled')} />}
         {loc.view === 'actions' && <Actions {...ctx} sel={loc.id} />}
         {loc.view === 'calls' && <Calls {...ctx} sel={loc.id} filter={filter} setFilter={setFilter} dataIssues={dataIssues} />}
 
@@ -108,7 +108,7 @@ export default function MondayScreen({ raw }: { raw: WeekendData }) {
           <label><input type="checkbox" checked={noNames} onChange={(e) => setNoNames(e.target.checked)} /> Missing names</label>
           <label><input type="checkbox" checked={empty} onChange={(e) => setEmpty(e.target.checked)} /> Empty weekend</label>
         </fieldset>
-        <p className="footer">Demo data from Call Hero brief. Names shown as first name + initial in counter-safe mode. Jade stores no health information; call summaries are administrative only.</p>
+        <p className="footer">Demo data from Call Hero brief. Names shown as first name + initial in counter-safe mode. Clinical details are withheld from this screen.</p>
       </main>
     </div>
   );
@@ -125,15 +125,15 @@ function useScrollTo(id: string | null, dep: unknown) {
 }
 
 /* ---------------- 1. Appointments ---------------- */
-function Appointments({ safe, st, view, actionFor, first, moreCount, sel, slots, others }: Ctx & { first?: ActionItem; moreCount: number; sel: string | null; slots: ReturnType<typeof buildMonday>['openSlots']; others: ActionItem[] }) {
-  const { bookings, counts } = view;
+function Appointments({ safe, st, view, actionFor, first, moreCount, sel, slots, others }: Ctx & { first?: ActionItem; moreCount: number; sel: string | null; slots: ReturnType<typeof buildMonday>['potentialOpenSlots']; others: ActionItem[] }) {
+  const { bookings, counts, candidateActions } = view;
   useScrollTo(sel, bookings.length);
   return (
     <>
       <p className="mon-strip num">
         <span><b>{counts.total}</b> calls</span><i>·</i>
         <span><b>{counts.booked}</b> booked ({counts.newPatientsBooked} new patients)</span><i>·</i>
-        <span><b>{counts.cancelled}</b> cancellations → <b>{counts.openSlots}</b> open slots</span><i>·</i>
+        <span><b>{counts.cancelled}</b> cancellations → <b>{counts.potentialOpenSlots}</b> openings to verify</span><i>·</i>
         <span className="mon-strip-need"><b>{moreCount + (first ? 1 : 0)}</b> need you</span>
       </p>
 
@@ -192,20 +192,34 @@ function Appointments({ safe, st, view, actionFor, first, moreCount, sel, slots,
           ) : <p className="mon-none">No bookings were recorded.</p>}
         </section>
 
-        <aside className="mon-side" aria-label="Open slots and still to do">
-          <section className="mon-panel" aria-labelledby="h-slots">
-            <h2 id="h-slots" className="mon-h2">Open slots <span className="mon-gc">{slots.length}</span></h2>
+        <aside className="mon-side" aria-label="Booking recovery and still to do">
+          <section className="mon-panel mon-recovery" aria-labelledby="h-slots">
+            <h2 id="h-slots" className="mon-h2">Booking recovery <span className="mon-gc">{candidateActions.length} contacts</span></h2>
+            <p className="mon-recovery-intro">Jade found unmet demand and cancellations. Confirm fit before offering any time.</p>
+            <h3 className="mon-recovery-sub">Potential openings · check live diary</h3>
             {slots.length ? (
               <ul className="mon-slots">
                 {slots.map((s) => (
                   <li key={s.freedByCallId}>
-                    <div className="mon-slot-t"><strong>{s.label}</strong>{s.practitioner && <span> · {s.practitioner.replace(/^Dr\s+\w+\s+/, 'Dr ')}</span>} <em className="mon-verify">verify</em></div>
-                    <div className="mon-slot-f">likely free — check the diary · freed by {s.freedBy}</div>
-                    <div className={`mon-slot-s${s.suggestedFor ? '' : ' none'}`}>{s.suggestedFor ? <>→ Possible: <b>{s.suggestedFor}</b>{s.suggestedNote && <span className="mon-unk"> ({s.suggestedNote})</span>}</> : '→ Nobody waiting — open for walk-ins'}</div>
+                    <div className="mon-slot-t"><strong>{s.label}</strong>{s.practitioner && <span> · {s.practitioner.replace(/^Dr\s+\w+\s+/, 'Dr ')}</span>} <em className="mon-verify">unverified</em></div>
+                    <div className="mon-slot-f">Cancellation: {s.freedBy} · check appointment type and duration</div>
                   </li>
                 ))}
               </ul>
-            ) : <p className="mon-none">No slots freed by cancellations.</p>}
+            ) : <p className="mon-none">No cancellation openings recorded.</p>}
+            <h3 className="mon-recovery-sub">People to call · ask what works</h3>
+            {candidateActions.length ? (
+              <ul className="mon-candidates">
+                {candidateActions.map((a) => (
+                  <li key={a.id}>
+                    <span className="mon-candidate-name">{safe ? a.title : a.person.name ?? a.title}</span>
+                    <span className="mon-candidate-reason">{a.callIds.length > 1 ? `${a.callIds.length} calls` : 'No suitable time yet'} · availability unknown</span>
+                    <a className="mon-lnk" href={`#actions/${a.id}`}>Review follow-up →</a>
+                  </li>
+                ))}
+              </ul>
+            ) : <p className="mon-none">No unbooked availability requests.</p>}
+            <p className="mon-recovery-rule">Verify diary → ask preferences → offer a compatible time. No appointment is held by this suggestion.</p>
           </section>
           <section className="mon-panel" aria-labelledby="h-todo">
             <h2 id="h-todo" className="mon-h2">Still to do <span className="mon-gc">{others.length}</span></h2>
@@ -271,7 +285,7 @@ function Actions({ safe, st, setStatus, view, bookingFor, sel }: Ctx & { sel: st
                 <dt>Missing or invalid <small>(Jade&rsquo;s core fields: name, phone, intent, booked status)</small></dt>
                 <dd>{cur.missing.length ? <ul className="mon-miss">{cur.missing.map((m) => <li key={m}>{m}</li>)}</ul> : 'None — all four core fields are present.'}</dd>
                 {cur.blocked.length > 0 && <><dt>Blocked steps</dt><dd><ul className="mon-miss blocked">{cur.blocked.map((m) => <li key={m}>{m}</li>)}</ul></dd></>}
-                {cur.slot && <><dt>Slot to offer</dt><dd>{cur.slot.label}{cur.slot.practitioner ? ` · ${cur.slot.practitioner.replace(/^Dr\s+\w+\s+/, 'Dr ')}` : ''} <em className="mon-verify">likely free — check the diary</em></dd></>}
+                {cur.category === 'win_back' && <><dt>Before offering a time</dt><dd>Confirm the patient’s days and time window, practitioner flexibility, appointment type and duration, and check the live diary.</dd></>}
               </dl>
               <div className="mon-dcontact">
                 {cur.category !== 'note' && <CallButton phone={cur.person.phone} safe={safe} note={cur.person.phoneNote} reason={cur.blocked[0] ?? 'No valid phone number on record.'} />}

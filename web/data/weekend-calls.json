@@ -12,14 +12,14 @@
   },
   "period": {
     "label": "Weekend of 14-17 November 2026",
-    "from": "2026-11-14T17:00:00+11:00",
-    "to": "2026-11-17T08:00:00+11:00",
+    "from": "2025-11-14T17:00:00+11:00",
+    "to": "2025-11-17T08:00:00+11:00",
     "note": "Clinic closed from Friday 5pm. This is everything Jade handled while nobody was there."
   },
   "calls": [
     {
       "id": "c001",
-      "started_at": "2026-11-14T17:04:22+11:00",
+      "started_at": "2025-11-14T17:04:22+11:00",
       "duration_seconds": 94,
       "caller_number": "+61412887301",
       "caller_name": "John Smith",
@@ -27,7 +27,7 @@
       "intent": "new_patient",
       "summary": "New patient, wants a check-up and clean. Mentioned he hasn't been to a dentist in about four years.",
       "appointment": {
-        "date": "2026-11-19",
+        "date": "2025-11-19",
         "time": "14:30",
         "type": "Check-up and clean",
         "practitioner": "Dr Rebecca Foster"
@@ -37,7 +37,7 @@
     },
     {
       "id": "c002",
-      "started_at": "2026-11-14T17:41:08+11:00",
+      "started_at": "2025-11-14T17:41:08+11:00",
       "duration_seconds": 38,
       "caller_number": "+61498220156",
       "caller_name": "Sarah Johnson",
@@ -45,7 +45,7 @@
       "intent": "cancellation",
       "summary": "Cancelled Monday 9:00am appointment. Work conflict. Did not rebook.",
       "appointment": {
-        "date": "2026-11-17",
+        "date": "2025-11-17",
         "time": "09:00",
         "type": "Check-up",
         "practitioner": "Dr Rebecca Foster",
@@ -56,7 +56,7 @@
     },
     {
       "id": "c003",
-      "started_at": "2026-11-14T18:12:55+11:00",
+      "started_at": "2025-11-14T18:12:55+11:00",
       "duration_seconds": 61,
       "caller_number": "+61403771842",
       "caller_name": "Emily Davis",
@@ -64,7 +64,7 @@
       "intent": "new_patient",
       "summary": "New patient. Moved to the area recently, looking for a regular dentist.",
       "appointment": {
-        "date": "2026-11-20",
+        "date": "2025-11-20",
         "time": "10:00",
         "type": "New patient exam",
         "practitioner": "Dr Mark Bennett"
@@ -74,7 +74,7 @@
     },
     {
       "id": "c004",
-      "started_at": "2026-11-14T19:33:17+11:00",
+      "started_at": "2025-11-14T19:33:17+11:00",
       "duration_seconds": 22,
       "caller_number": "+61455019927",
       "caller_name": null,
@@ -87,7 +87,7 @@
     },
     {
       "id": "c005",
-      "started_at": "2026-11-14T20:07:44+11:00",
+      "started_at": "2025-11-14T20:07:44+11:00",
       "duration_seconds": 118,
       "caller_number": "+61421665338",
       "caller_name": "Michael Brown",
@@ -101,7 +101,7 @@
     },
     {
       "id": "c006",
-      "started_at": "2026-11-14T21:19:02+11:00",
+      "started_at": "2025-11-14T21:19:02+11:00",
       "duration_seconds": 47,
       "caller_number": "+61407449183",
       "caller_name": "Jessica Wilson",
@@ -109,7 +109,7 @@
       "intent": "existing_patient",
       "summary": "Existing patient, wants to bring her six-month check-up forward.",
       "appointment": {
-        "date": "2026-11-21",
+        "date": "2025-11-21",
         "time": "16:00",
         "type": "Check-up and clean",
         "practitioner": "Dr Rebecca Foster"
@@ -119,7 +119,7 @@
     },
     {
       "id": "c007",
-      "started_at": "2026-11-15T08:22:39+11:00",
+      "started_at": "2025-11-15T08:22:39+11:00",
       "duration_seconds": 73,
       "caller_number": "+61438902114",
       "caller_name": "David Miller",
@@ -133,7 +133,7 @@
     },
     {
       "id": "c008",
-      "started_at": "2026-11-15T09:15:51+11:00",
+      "started_at": "2025-11-15T09:15:51+11:00",
       "duration_seconds": 29,
       "caller_number": "+61466330887",
       "caller_name": "Amanda Taylor",
@@ -146,7 +146,7 @@
     },
     {
       "id": "c009",
-      "started_at": "2026-11-15T09:47:13+11:00",
+      "started_at": "2025-11-15T09:47:13+11:00",
       "duration_seconds": 52,
       "caller_number": "+61491775206",
       "caller_name": "James Anderson",
@@ -160,7 +160,7 @@
     },
     {
       "id": "c010",
-      "started_at": "2026-11-15T10:33:28+11:00",
+      "started_at": "2025-11-15T10:33:28+11:00",
       "duration_seconds": 88,
       "caller_number": "+61402118644",
       "caller_name": "Laura Thomas",
@@ -168,7 +168,7 @@
       "intent": "new_patient",
       "summary": "New patient. Asked whether the clinic does children's appointments — confirmed yes. Booking for her son.",
       "appointment": {
-        "date": "2026-11-22",
+        "date": "2025-11-22",
         "time": "09:30",
         "type": "Children's check-up",
         "practitioner": "Dr Mark Bennett"
@@ -178,7 +178,7 @@
     },
     {
       "id": "c011",
-      "started_at": "2026-11-15T11:02:09+11:00",
+      "started_at": "2025-11-15T11:02:09+11:00",
       "duration_seconds": 41,
       "caller_number": "+61477283019",
       "caller_name": "Chris Martin",
@@ -192,7 +192,7 @@
     },
     {
       "id": "c012",
-      "started_at": "2026-11-15T11:58:44+11:00",
+      "started_at": "2025-11-15T11:58:44+11:00",
       "duration_seconds": 19,
       "caller_number": "+61413556722",
       "caller_name": null,
@@ -205,7 +205,7 @@
     },
     {
       "id": "c013",
-      "started_at": "2026-11-15T13:24:36+11:00",
+      "started_at": "2025-11-15T13:24:36+11:00",
       "duration_seconds": 66,
       "caller_number": "+61477283019",
       "caller_name": "Chris Martin",
@@ -219,7 +219,7 @@
     },
     {
       "id": "c014",
-      "started_at": "2026-11-15T14:11:57+11:00",
+      "started_at": "2025-11-15T14:11:57+11:00",
       "duration_seconds": 103,
       "caller_number": "+61434920651",
       "caller_name": "Daniel Clark",
@@ -233,7 +233,7 @@
     },
     {
       "id": "c015",
-      "started_at": "2026-11-15T15:40:22+11:00",
+      "started_at": "2025-11-15T15:40:22+11:00",
       "duration_seconds": 57,
       "caller_number": "+61425887140",
       "caller_name": "Rachel Lewis",
@@ -241,7 +241,7 @@
       "intent": "cancellation",
       "summary": "Cancelled Tuesday 11:00am. Family emergency. Asked to be called to rebook next week.",
       "appointment": {
-        "date": "2026-11-18",
+        "date": "2025-11-18",
         "time": "11:00",
         "type": "Check-up and clean",
         "practitioner": "Dr Rebecca Foster",
@@ -253,7 +253,7 @@
     },
     {
       "id": "c016",
-      "started_at": "2026-11-15T16:52:08+11:00",
+      "started_at": "2025-11-15T16:52:08+11:00",
       "duration_seconds": 34,
       "caller_number": "+61408117395",
       "caller_name": "Matthew Walker",
@@ -266,7 +266,7 @@
     },
     {
       "id": "c017",
-      "started_at": "2026-11-15T18:29:41+11:00",
+      "started_at": "2025-11-15T18:29:41+11:00",
       "duration_seconds": 79,
       "caller_number": "+61477283019",
       "caller_name": "Chris Martin",
@@ -274,7 +274,7 @@
       "intent": "new_patient",
       "summary": "Third attempt. Accepted a Thursday afternoon slot after being unable to get Monday or Tuesday twice earlier today.",
       "appointment": {
-        "date": "2026-11-20",
+        "date": "2025-11-20",
         "time": "15:30",
         "type": "New patient exam",
         "practitioner": "Dr Rebecca Foster"
@@ -285,7 +285,7 @@
     },
     {
       "id": "c018",
-      "started_at": "2026-11-15T20:14:03+11:00",
+      "started_at": "2025-11-15T20:14:03+11:00",
       "duration_seconds": 45,
       "caller_number": "+61419663288",
       "caller_name": "Emma Hall",
@@ -293,7 +293,7 @@
       "intent": "existing_patient",
       "summary": "Existing patient booking a routine clean.",
       "appointment": {
-        "date": "2026-11-25",
+        "date": "2025-11-25",
         "time": "08:30",
         "type": "Clean",
         "practitioner": "Dr Mark Bennett"
@@ -303,7 +303,7 @@
     },
     {
       "id": "c019",
-      "started_at": "2026-11-16T02:14:37+11:00",
+      "started_at": "2025-11-16T02:14:37+11:00",
       "duration_seconds": 126,
       "caller_number": "+61452008914",
       "caller_name": "Peter Young",
@@ -317,7 +317,7 @@
     },
     {
       "id": "c020",
-      "started_at": "2026-11-16T08:41:19+11:00",
+      "started_at": "2025-11-16T08:41:19+11:00",
       "duration_seconds": 62,
       "caller_number": "+61406229773",
       "caller_name": "Olivia King",
@@ -325,7 +325,7 @@
       "intent": "new_patient",
       "summary": "New patient, referred by an existing patient. Wants a check-up and to discuss whitening.",
       "appointment": {
-        "date": "2026-11-24",
+        "date": "2025-11-24",
         "time": "11:00",
         "type": "New patient exam",
         "practitioner": "Dr Rebecca Foster"
@@ -335,7 +335,7 @@
     },
     {
       "id": "c021",
-      "started_at": "2026-11-16T09:33:55+11:00",
+      "started_at": "2025-11-16T09:33:55+11:00",
       "duration_seconds": 27,
       "caller_number": "+61443891026",
       "caller_name": null,
@@ -348,7 +348,7 @@
     },
     {
       "id": "c022",
-      "started_at": "2026-11-16T10:18:42+11:00",
+      "started_at": "2025-11-16T10:18:42+11:00",
       "duration_seconds": 95,
       "caller_number": "+61417550284",
       "caller_name": "Sophie Wright",
@@ -356,7 +356,7 @@
       "intent": "new_patient",
       "summary": "New patient. Nervous about dental visits, asked whether the practice is good with anxious patients. Jade confirmed and noted the concern.",
       "appointment": {
-        "date": "2026-11-26",
+        "date": "2025-11-26",
         "time": "13:00",
         "type": "New patient exam",
         "practitioner": "Dr Mark Bennett"
@@ -367,7 +367,7 @@
     },
     {
       "id": "c023",
-      "started_at": "2026-11-16T11:05:13+11:00",
+      "started_at": "2025-11-16T11:05:13+11:00",
       "duration_seconds": 33,
       "caller_number": "+61498220156",
       "caller_name": "Sarah Johnson",
@@ -375,7 +375,7 @@
       "intent": "existing_patient",
       "summary": "Rebooking the Monday appointment she cancelled on Friday evening.",
       "appointment": {
-        "date": "2026-11-27",
+        "date": "2025-11-27",
         "time": "09:00",
         "type": "Check-up",
         "practitioner": "Dr Rebecca Foster"
@@ -385,7 +385,7 @@
     },
     {
       "id": "c024",
-      "started_at": "2026-11-16T12:47:29+11:00",
+      "started_at": "2025-11-16T12:47:29+11:00",
       "duration_seconds": 71,
       "caller_number": "+61429104778",
       "caller_name": "Grace Scott",
@@ -399,7 +399,7 @@
     },
     {
       "id": "c025",
-      "started_at": "2026-11-16T14:22:06+11:00",
+      "started_at": "2025-11-16T14:22:06+11:00",
       "duration_seconds": 49,
       "caller_number": "+61461337920",
       "caller_name": "Ryan Baker",
@@ -412,7 +412,7 @@
     },
     {
       "id": "c026",
-      "started_at": "2026-11-16T15:58:51+11:00",
+      "started_at": "2025-11-16T15:58:51+11:00",
       "duration_seconds": 84,
       "caller_number": "+61429104778",
       "caller_name": "Grace Scott",
@@ -427,7 +427,7 @@
     },
     {
       "id": "c027",
-      "started_at": "2026-11-16T17:11:34+11:00",
+      "started_at": "2025-11-16T17:11:34+11:00",
       "duration_seconds": 56,
       "caller_number": "+61414778203",
       "caller_name": "Andrew Green",
@@ -435,7 +435,7 @@
       "intent": "existing_patient",
       "summary": "Existing patient rescheduling from Wednesday to Friday.",
       "appointment": {
-        "date": "2026-11-21",
+        "date": "2025-11-21",
         "time": "10:30",
         "type": "Check-up",
         "practitioner": "Dr Rebecca Foster",
@@ -446,7 +446,7 @@
     },
     {
       "id": "c028",
-      "started_at": "2026-11-16T19:04:17+11:00",
+      "started_at": "2025-11-16T19:04:17+11:00",
       "duration_seconds": 31,
       "caller_number": "+61435662119",
       "caller_name": "Natalie Evans",
@@ -454,7 +454,7 @@
       "intent": "cancellation",
       "summary": "Cancelled Thursday 14:00. Travelling for work. Will call back to rebook.",
       "appointment": {
-        "date": "2026-11-20",
+        "date": "2025-11-20",
         "time": "14:00",
         "type": "Clean",
         "practitioner": "Dr Mark Bennett",
@@ -465,7 +465,7 @@
     },
     {
       "id": "c029",
-      "started_at": "2026-11-16T20:38:02+11:00",
+      "started_at": "2025-11-16T20:38:02+11:00",
       "duration_seconds": 67,
       "caller_number": "+61447290163",
       "caller_name": "Kevin Turner",
@@ -473,7 +473,7 @@
       "intent": "new_patient",
       "summary": "New patient. Chipped a tooth on the weekend, not painful but wants it looked at.",
       "appointment": {
-        "date": "2026-11-18",
+        "date": "2025-11-18",
         "time": "08:00",
         "type": "Emergency assessment",
         "practitioner": "Dr Rebecca Foster"
@@ -484,7 +484,7 @@
     },
     {
       "id": "c030",
-      "started_at": "2026-11-17T06:52:44+11:00",
+      "started_at": "2025-11-17T06:52:44+11:00",
       "duration_seconds": 43,
       "caller_number": "+61402883517",
       "caller_name": "Hannah Moore",
@@ -492,7 +492,7 @@
       "intent": "existing_patient",
       "summary": "Existing patient, routine booking before work.",
       "appointment": {
-        "date": "2026-12-02",
+        "date": "2025-12-02",
         "time": "17:00",
         "type": "Check-up and clean",
         "practitioner": "Dr Mark Bennett"
@@ -502,7 +502,7 @@
     },
     {
       "id": "c031",
-      "started_at": "2026-11-17T07:52:11+11:00",
+      "started_at": "2025-11-17T07:52:11+11:00",
       "duration_seconds": 58,
       "caller_number": "+61421665338",
       "caller_name": "Michael Brown",
