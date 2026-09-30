@@ -1,6 +1,5 @@
 'use client';
 import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
-import Link from 'next/link';
 import { buildMonday, type ActionItem, type Booking, type CallRow, type WeekendData } from '@/lib/monday';
 import { CallButton, StatusPill, TAGS, type Status } from './ActionCard';
 
@@ -26,7 +25,7 @@ function parseHash(): { view: ViewId; id: string | null } {
 const titleOf = (a: ActionItem) => (a.category === 'optional' ? 'Optional: offer earlier slot' : a.title);
 
 export default function MondayScreen({ raw }: { raw: WeekendData }) {
-  const [safe, setSafe] = useState(true);
+  const safe = true;
   const [noRec, setNoRec] = useState(false);
   const [noNames, setNoNames] = useState(false);
   const [empty, setEmpty] = useState(false);
@@ -40,7 +39,6 @@ export default function MondayScreen({ raw }: { raw: WeekendData }) {
     const on = () => { const p = parseHash(); setLoc(p); if (p.id) setLast((l) => ({ ...l, [p.view]: p.id })); };
     on(); window.addEventListener('hashchange', on); return () => window.removeEventListener('hashchange', on);
   }, []);
-  useEffect(() => { if (safe) setRevealed(new Set()); }, [safe]);
   useEffect(() => { if (!revealed.size) return; const t = setTimeout(() => setRevealed(new Set()), 15000); return () => clearTimeout(t); }, [revealed]);
 
   const view = useMemo(() => {
@@ -83,11 +81,6 @@ export default function MondayScreen({ raw }: { raw: WeekendData }) {
           </div>
           <div className="mon-top-r">
             <span className="mon-progress num" aria-live="polite" role="status">{done} of {mustTotal} done</span>
-            <button type="button" role="switch" aria-checked={safe} className={`mon-switch${safe ? ' on' : ''}`} onClick={() => setSafe((s) => !s)}>
-              <span className="mon-knob" aria-hidden="true" />
-              <span>Counter-safe mode <b>{safe ? 'ON' : 'OFF'}</b></span>
-            </button>
-            <Link className="mon-jade" href="/jade">How Jade triages →</Link>
           </div>
         </div>
         <nav className="wrap mon-tabs" aria-label="Views">
@@ -108,7 +101,7 @@ export default function MondayScreen({ raw }: { raw: WeekendData }) {
           <label><input type="checkbox" checked={noNames} onChange={(e) => setNoNames(e.target.checked)} /> Missing names</label>
           <label><input type="checkbox" checked={empty} onChange={(e) => setEmpty(e.target.checked)} /> Empty weekend</label>
         </fieldset>
-        <p className="footer">Demo data from Call Hero brief. Names shown as first name + initial in counter-safe mode. Clinical details are withheld from this screen.</p>
+        <p className="footer">Demo data from Call Hero brief. Names shown as first name + initial. Clinical details are withheld from this screen.</p>
       </main>
     </div>
   );
@@ -348,7 +341,7 @@ function Calls({ safe, st, view, actionFor, revealed, toggleReveal, sel, filter,
                   <div className="mon-c3">
                     <div><b>{c.intentWords}</b> · Outcome: {c.outcomeWords.toLowerCase()}</div>
                     <p className="mon-sum">
-                      {hide ? <><em className="mon-muted">Hidden in counter-safe mode.</em> <button type="button" className="mon-link" onClick={() => toggleReveal(c.id)}>Show summary</button></> : <>{c.adminSummary}{c.withheld && <em className="mon-withheld"> (summary withheld: may contain clinical detail)</em>}</>}
+                      {hide ? <><em className="mon-muted">Summary hidden by default.</em> <button type="button" className="mon-link" onClick={() => toggleReveal(c.id)}>Show summary</button></> : <>{c.adminSummary}{c.withheld && <em className="mon-withheld"> (summary withheld: may contain clinical detail)</em>}</>}
                     </p>
                     <div className="mon-rec">{c.recording ? <span className="mon-recok">Recording available</span> : <span className="mon-norec">No recording</span>}</div>
                   </div>
