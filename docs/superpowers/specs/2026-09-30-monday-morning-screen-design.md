@@ -2,212 +2,111 @@
 
 ## Demo design for the Call Hero Hackathon
 
-## The problem
+> Design direction: the **booked appointments list is the main content of the first screen**. The owner sees each name, phone field, appointment time, and any uncertainty or need for human review. Detailed business and data rules are in [`MONDAY_MORNING_SCREEN_SPEC.md`](../../MONDAY_MORNING_SCREEN_SPEC.md).
 
-Harbourside Dental was closed over the weekend. Jade answered 31 calls while no staff were present. At 8:00 am, the practice owner has 90 seconds before the day starts to understand what happened and decide what needs attention.
+## The problem and the 90-second decision
 
-The screen should not ask her to inspect 31 transcripts. It should turn those calls into a short, reliable action list.
+Jade answered calls while Harbourside Dental was closed. At 8:00 am on Monday, the practice owner has 90 seconds to understand the effect on appointments and decide what staff should handle first. The deliverable is one usable screen, not a transcript inbox.
 
-Our design question is:
+The first view answers, in order:
 
-> What does the owner need to know now, and what does she need to do next?
+1. **Who is booked, how can we contact them, and when are they expected?**
+2. **Which booking details are incomplete or contradictory?**
+3. **What unresolved matter needs a person now, and what is the next action?**
 
-## Product decision
+A compact priority alert remains visible without replacing the appointment list. This lets a source-marked urgent case reach the owner immediately while keeping the booked schedule as the visual centre.
 
-We will build an action-first dashboard rather than an analytics dashboard or a call inbox.
+## Evidence and scope
 
-The screen will answer three questions in order:
+The challenge brief says Jade captures a caller's name, phone, intent and whether an appointment was made. It does not capture or store symptoms, health information, Medicare numbers or other clinical details as ordinary data. If a caller volunteers clinical information, the screen may show a neutral practitioner-follow-up flag, but not the clinical text. The screen must remain useful on a phone, with missing information, and when recordings are unavailable. Front-desk staff and a patient nearby may see the screen.
 
-1. What needs attention now?
-2. What changed in today's schedule?
-3. What did Jade already resolve?
+The provided `weekend-calls.pdf` describes 31 call events. It is a source for regression examples, not a fixed input size. The repository's existing `data/weekend_calls.json` is a separate synthetic array and does not contain all fields shown in that PDF. The original JSON corresponding to the PDF has not been supplied in this repository. Counts shown in a demo must name the dataset from which they were calculated.
 
-This prioritises decisions over call volume. The owner can still open the complete call list, but it is not the first thing she sees.
+The brief allows a clickable prototype and does not require live telephony, a production database, or a Cliniko integration. Do not describe a prototype click as a real callback or an appointment written to Cliniko.
 
-## What the source data shows
+## First-screen layout
 
-The supplied JSON contains 31 call records from 26 caller numbers. Several records belong to the same caller and should be read as one unfolding case rather than separate tasks.
-
-- Chris Martin called three times after failing to find a suitable appointment. His third call ended in a successful booking.
-- Sarah Johnson cancelled an appointment and later rebooked. Her case is resolved, although the original appointment slot remains open.
-- Michael Brown called twice about the same disputed invoice. No callback is recorded and his sentiment worsened.
-- Grace Scott called twice about availability. She remains unbooked and asked to join the waiting list.
-
-Jade completed 12 bookings, including 7 new-patient bookings and 5 existing-patient bookings. Jade also answered 3 general clinic questions.
-
-The proposed staff follow-up queue contains 7 caller cases:
-
-| Priority | Caller | Why it appears | Proposed action |
-| --- | --- | --- | --- |
-| Urgent | Peter Young | Reported significant pain at 2:14 am and was flagged for Monday follow-up | Call now and send for clinical review |
-| Immediate | Michael Brown | Called twice about a disputed invoice and has not received the promised callback | Assign to the practice manager and call |
-| Opportunity | Grace Scott | Called twice, remains unbooked and requested the waiting list | Review against open appointments and call |
-| Opportunity | David Miller | Could not find a suitable appointment and said he might try another clinic | Attempt recovery callback |
-| Follow-up | James Anderson | Wanted a first appointment but supplied an invalid callback number | Try the incoming caller number |
-| Follow-up | Rachel Lewis | Cancelled and explicitly requested help to rebook | Call to rebook |
-| Follow-up | Daniel Clark | Jade promised a callback with an orthodontic referral | Provide referral callback |
-
-This queue is a product decision derived from the supplied fields and summaries. It is not a clinical assessment.
-
-## Important source-data issue
-
-The narrative and ISO dates disagree about weekdays. For example, the source describes 17 November 2026 as Monday, but that calendar date is Tuesday. The same one-day mismatch appears in other appointment summaries.
-
-For the hackathon demo, we will preserve the challenge narrative and show relative operational labels such as **Today at 9:00 am**. We will not calculate weekday names from the ISO dates or silently rewrite the supplied records.
-
-## Screen hierarchy
-
-### 1. Header
-
-The header provides orientation, not analysis.
+Use a dark background and one screen with a clear reading path. The text below is layout guidance, not a claim that the current app implements it.
 
 ```text
-Monday, 8:00 am
-31 weekend calls · 26 callers · 7 need follow-up
+┌─────────────────────────────────────────────────────────────────────────┐
+│ Monday 08:00  ·  weekend calls: [calculated]  ·  data status: [status] │
+│ FIRST ACTION: [reason] → [next step]                    [Open details] │
+├──────────────────────────────────────────┬──────────────────────────────┤
+│ BOOKED APPOINTMENTS                      │ NEEDS A PERSON               │
+│ Name  | Phone  | Time  | Status          │ Priority · reason · action   │
+│ ...   | ...    | ...   | Recorded        │ ...                          │
+│ ...   | ...    | ...   | Verify time     │                              │
+│ ...   | ...    | ...   | Human review    │ DATA TO CHECK                │
+│                                          │ Missing · invalid · conflict │
+├──────────────────────────────────────────┴──────────────────────────────┤
+│ Jade handled [calculated]  ·  Other calls [Open history]               │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 2. Do these first
+The appointment table gets the largest area. Every booking row has distinct **name**, **phone**, **appointment date and time**, and **status** fields. If a value is missing, keep the row and put an explicit placeholder in that field. A source outcome of `booked` means “Jade recorded a booking”; it is not proof that a live calendar or clinic opening hours have been checked.
 
-The main area contains three large cards. These are deliberately specific rather than generic categories.
+The top alert shows one concrete next action and its reason. The remaining work appears in a compact side list with an accurate remaining count and an accessible expansion path. No urgent item may disappear because the visible list has a row limit. On a narrow phone screen, show the top alert, then the appointment list, then the remaining tasks as stacked sections.
 
-#### Urgent patient concern
+### Status language and colour
 
-```text
-Peter Young
-Significant pain reported at 2:14 am.
-Jade advised emergency care and flagged a Monday follow-up.
+| Meaning | Suggested treatment | Required text |
+| --- | --- | --- |
+| Booking recorded, no known issue | Quiet neutral row | `Booked by Jade` or `Booking recorded` |
+| Missing or contradictory data | Amber row marker | The exact field and reason, e.g. `Time missing` |
+| Human action needed | Purple or blue marker | The staff action, e.g. `Verify booking` |
+| Source explicitly marked urgent | Red priority marker | `Source marked urgent; practitioner review` |
 
-[Call Peter]  [Listen to recording]
-```
+Colour is never the only signal: add a word label and, where useful, an icon. Distinguish data quality from business priority. An urgent case with no usable callback number stays urgent and also shows `Contact blocked`.
 
-The screen repeats what Jade recorded. It does not diagnose the patient or claim that the case is safe to wait.
+The name and phone columns must be easy for staff to use without making private details large enough for someone at the counter to read casually. The exact default phone masking and reveal behaviour remains a team decision; the phone field must still be present and the complete usable number accessible to an authorised staff member. Do not place clinical free text in a row, tooltip, details panel, export, or error message. A `recording_available` flag alone is not a playable recording.
 
-#### Unresolved complaint
+## How the screen gets its rows
 
-```text
-Michael Brown
-Two calls about a disputed invoice.
-No callback recorded. Frustration is increasing.
+Treat **call events**, **contact matters**, **appointments**, and **staff work items** as separate objects. Do not use the number of calls as the number of patients or the number of open tasks. Link repeated calls only when the identity and matter can be established from reliable fields; a shared number may belong to more than one person.
 
-[Call Michael]  [Assign to manager]
-```
+The processing order is:
 
-The two calls are combined into one case. The repeated call raises its position without creating duplicate work.
+1. Read the clinic configuration and call events; validate structure and preserve allowed source values and source IDs.
+2. Mark each field as known, missing, invalid, conflicting, or unverified. Do not invent a name, phone digit, appointment time, weekday, or clinician.
+3. Link call events that concern the same matter and find its latest supported state. A later booking can close an earlier “no availability” reminder for that matter; it cannot close a separate complaint or practitioner-follow-up item.
+4. Build one appointment row for each source booking. Show its validation status separately from the source outcome.
+5. Build unresolved human work items, assign an explainable priority category, and show the reason and next action.
+6. Record a staff action only when the prototype state actually changes. A phone-link click alone does not mean the caller was reached.
 
-#### Today's schedule gap
+The demo rules must work for 0, 1, 31, or more calls. Unknown outcomes and partly damaged records remain visible as data issues instead of becoming “all handled”. Failed data loading must not render as an empty, fully resolved morning.
 
-```text
-Today at 9:00 am · Dr Rebecca Foster
-The original appointment was cancelled and later rebooked for another day.
-This slot remains open.
+## Source-data checks that affect the demo
 
-Possible contacts: Grace Scott, David Miller
-[Review candidates]  [Mark handled]
-```
+The PDF data includes 31 calls, 12 outcomes marked `booked`, and 26 distinct caller numbers. These are **call, outcome, and number counts**, not verified patient or live-calendar counts. Multiple calls from one contact may end in a booking, while another matter from that contact can remain open. A cancellation followed by a new booking can close the rebooking matter while leaving the cancelled slot as a separate **possible** schedule change.
 
-The candidates are suggestions for contact, not automatic matches. The source data does not establish that their treatment needs and availability fit this slot.
+The narrative weekdays and ISO dates conflict in the supplied PDF. Some source bookings also fall on days outside the stated Monday–Friday opening schedule. Do not quietly convert an inconsistent source date into a confident label such as `Today at 9:00 am`. Preserve the source, flag the contradiction, and ask staff to verify the appointment. A cancelled time is not guaranteed to be available without a current calendar. A caller ID and an incomplete verbal callback number are different pieces of evidence; do not present either as a verified replacement for the other.
 
-### 3. Next follow-ups
+These examples test general rules. The UI must not hardcode an exact queue size, a fixed list of callers, or a presumed open slot.
 
-A compact list shows the remaining four cases:
+## Prototype interactions
 
-```text
-James Anderson  · Invalid callback number · Try incoming number
-Rachel Lewis    · Rebooking requested      · Call to arrange
-Daniel Clark    · Referral promised        · Provide referral
-Grace or David  · Open-slot opportunity    · Review after priority calls
-```
+The first version needs a short, demonstrable loop:
 
-If Grace or David has already been handled through the open-slot card, that case disappears from this list rather than appearing twice.
+1. Open a booking row and see its non-clinical details, source call IDs, and any missing or conflicting fields.
+2. Open an unresolved work item and see why it is prioritised, the next action, and whether a usable contact number is available.
+3. Mark an item in progress or handled and see its state and counts change; allow a mistaken action to be reopened. If state only survives the current session, say so.
+4. Open the remaining calls for audit without turning the first screen into a transcript list.
 
-### 4. Jade handled
-
-Completed work is shown as a quiet summary below the action queue:
-
-```text
-12 appointments booked
-3 clinic questions answered
-1 repeat caller recovered and booked
-```
-
-This section demonstrates Jade's value without competing with unresolved work.
-
-### 5. Full call history
-
-A secondary **View all 31 calls** control opens the complete history. It is useful for audit and recordings but is not part of the 90-second reading path.
-
-## Prioritisation rules
-
-The demo uses a small, explicit rule set:
-
-1. Patient-safety flags appear first.
-2. Changes affecting today's schedule appear next.
-3. Repeated complaints or unfulfilled callback promises are elevated.
-4. Recoverable patients and ordinary follow-ups come after immediate work.
-5. Completed bookings and answered questions are summarised, not placed in the action queue.
-6. Calls from the same caller number are grouped before priority is calculated.
-7. The interface never infers a diagnosis or represents a suggested appointment as confirmed.
-
-These rules are deterministic for the prototype. The demo does not need an LLM to rank the supplied records.
-
-## Data model for the prototype
-
-The implementation should use the following concepts:
-
-- `calls`: the 31 supplied call records.
-- `callerCases`: records grouped by caller number and ordered by call time.
-- `actionItems`: caller cases that still require a staff response.
-- `priority`: one of `urgent`, `immediate`, `opportunity`, `follow_up` or `resolved`.
-- `recommendedAction`: the next staff action displayed on a card.
-- `todayImpacts`: schedule changes that affect the current clinic day.
-- `resolvedSummary`: counts of work Jade completed without staff intervention.
-
-The names describe the screen's responsibilities. They do not introduce a general workflow engine.
-
-## Demo interaction
-
-The prototype only needs three interactions:
-
-1. Open a priority card to read the call summary and recording metadata.
-2. Mark or assign an action, causing it to leave the immediate queue.
-3. Open the full call list for audit.
-
-The first version can keep state in the browser. A live voice agent, telephony, authentication and a production database are not required to prove the screen concept.
+The workflow works without recordings. Only offer playback when an authorised, actual audio resource is present; the PDF provides availability flags but no audio file or URL.
 
 ## Ninety-second demo script
 
-1. Start with the headline: Jade answered 31 calls, but the owner does not need 31 notifications.
-2. Point to Peter. Patient safety comes first, so this call is placed at the top with a direct callback action.
-3. Point to the open 9:00 am slot. The screen connects a cancellation to potential recovery candidates but does not book anyone without confirmation.
-4. Point to Michael. His two calls are grouped into one escalating complaint instead of two unrelated messages.
-5. Close with the completed-work summary. Jade handled routine work and left a short queue that a human can act on.
+1. Start at the booked-appointments list: the owner can see who Jade recorded as booked, the contact field, the appointment time, and which rows need verification.
+2. Show one incomplete or contradictory booking. The interface gives the exact reason rather than silently fixing the source.
+3. Move to the top alert and explain why this human matter comes first and what the next action is, without disclosing clinical details.
+4. Show a repeat caller grouped into one current matter, then mark a task in progress and show the changed count.
+5. Close with Jade's completed-work summary and one sentence about what was intentionally left off the first screen.
 
-The intended message is simple:
-
-> Jade does not just answer weekend calls. By Monday morning, it turns them into the next decisions for the practice.
-
-## Out of scope
-
-The hackathon prototype will not include:
-
-- a new voice assistant;
-- Twilio, Vapi or Retell integration;
-- automated diagnosis or treatment advice;
-- automatic booking from suggested candidates;
-- production authentication or permissions;
-- a general analytics suite;
-- a complete practice-management integration.
-
-These features do not help validate whether the owner can understand and act on the weekend in 90 seconds.
+This demonstrates Jade's value while making the owner's next action explicit. It does not imply that every call became a confirmed booking or that all staff work is done.
 
 ## Success criteria
 
-The demo succeeds if a viewer can determine, without opening the full call list:
+Without opening the full call history, a viewer can identify a booked person's name, contact field and appointment time; distinguish a booking with no known issue from one requiring review; identify the first staff action and why it is first; and find the remaining unfinished work. The same flow remains usable on a phone and when fields or recordings are missing.
 
-1. who requires the first callback;
-2. what changed in today's schedule;
-3. which complaint is still unresolved;
-4. how many bookings Jade completed;
-5. what action to take from each priority card.
-
-The test is comprehension, not feature count.
+The detailed acceptance cases, open business decisions, three-person responsibility split, and submission checklist live in [`MONDAY_MORNING_SCREEN_SPEC.md`](../../MONDAY_MORNING_SCREEN_SPEC.md). This document describes the intended demo screen; it does not claim that the current Streamlit app already provides these behaviours.
