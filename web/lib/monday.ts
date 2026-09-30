@@ -180,9 +180,9 @@ export function withAdminSummaries(data: Omit<WeekendData, 'calls'> & { calls: (
 function coreMissing(c: WeekendCall) {
   const missing: string[] = []; const blocked: string[] = [];
   if (!c.caller_name) missing.push('name not captured');
-  if (c.outcome === 'failed_callback_number') { missing.push('callback number invalid (9 digits)'); missing.push('booked status: not completed (no confirmed callback number)'); blocked.push('Call-back blocked: no confirmed number'); }
-  else if (!c.caller_number) { missing.push('phone not captured'); blocked.push('Call-back blocked: no phone number'); }
-  else if (!formatAU(c.caller_number).valid) { missing.push('phone invalid'); blocked.push('Call-back blocked: no valid number'); }
+  if (c.outcome === 'failed_callback_number') { missing.push('callback number invalid (9 digits)'); missing.push('booked status: not completed (no confirmed callback number)'); blocked.push('No confirmed number to call.'); }
+  else if (!c.caller_number) { missing.push('phone not captured'); blocked.push('No phone number to call.'); }
+  else if (!formatAU(c.caller_number).valid) { missing.push('phone invalid'); blocked.push('No valid number to call.'); }
   if (!c.intent || c.intent === 'unknown') missing.push('intent not captured');
   if (!(c.outcome in OUTCOME_WORDS)) missing.push('booked status not recorded');
   return { missing, blocked };

@@ -162,8 +162,8 @@ function Appointments({ safe, st, view, actionFor, first, moreCount, sel, slots,
                       {handled && b.status === 'Verify' && <span className="mon-b3">was: Needs review — {b.reason}</span>}
                     </div>
                     <div className="mon-rl">
-                      {a ? <a className="mon-lnk" href={`#actions/${a.id}`}>Staff action →</a> : <span className="mon-norec">No staff action</span>}
-                      <a className="mon-lnk" href={`#calls/${b.callId}`}>Call evidence →</a>
+                      {a ? <a className="mon-lnk" href={`#actions/${a.id}`}>Staff action →</a> : null}
+                      <a className="mon-lnk" href={`#calls/${b.callId}`}>Call details →</a>
                     </div>
                   </li>
                 );
@@ -175,13 +175,13 @@ function Appointments({ safe, st, view, actionFor, first, moreCount, sel, slots,
         <aside className="mon-side" aria-label="Booking recovery and still to do">
           <section className="mon-panel mon-recovery" aria-labelledby="h-slots">
             <h2 id="h-slots" className="mon-h2">Booking recovery <span className="mon-gc">{candidateActions.length} contacts</span></h2>
-            <p className="mon-recovery-intro">Jade found unmet demand and cancellations. Confirm fit before offering any time.</p>
+            <p className="mon-recovery-intro">Cancellations and patients still looking for a time.</p>
             <h3 className="mon-recovery-sub">Potential openings · check live diary</h3>
             {slots.length ? (
               <ul className="mon-slots">
                 {slots.map((s) => (
                   <li key={s.freedByCallId}>
-                    <div className="mon-slot-t"><strong>{s.label}</strong>{s.practitioner && <span> · {s.practitioner.replace(/^Dr\s+\w+\s+/, 'Dr ')}</span>} <em className="mon-verify">unverified</em></div>
+                    <div className="mon-slot-t"><strong>{s.label}</strong>{s.practitioner && <span> · {s.practitioner.replace(/^Dr\s+\w+\s+/, 'Dr ')}</span>} <em className="mon-verify">Check diary</em></div>
                     <div className="mon-slot-f">Cancellation: {s.freedBy} · check appointment type and duration</div>
                   </li>
                 ))}
@@ -193,13 +193,13 @@ function Appointments({ safe, st, view, actionFor, first, moreCount, sel, slots,
                 {candidateActions.map((a) => (
                   <li key={a.id}>
                     <span className="mon-candidate-name">{safe ? a.title : a.person.name ?? a.title}</span>
-                    <span className="mon-candidate-reason">{a.callIds.length > 1 ? `${a.callIds.length} calls` : 'No suitable time yet'} · availability unknown</span>
+                    <span className="mon-candidate-reason">{a.callIds.length > 1 ? `${a.callIds.length} calls` : 'No suitable time yet'} · check suitable times</span>
                     <a className="mon-lnk" href={`#actions/${a.id}`}>Review follow-up →</a>
                   </li>
                 ))}
               </ul>
             ) : <p className="mon-none">No unbooked availability requests.</p>}
-            <p className="mon-recovery-rule">Verify diary → ask preferences → offer a compatible time. No appointment is held by this suggestion.</p>
+            <p className="mon-recovery-rule">Check the diary and patient preferences before offering a time.</p>
           </section>
           <section className="mon-panel" aria-labelledby="h-todo">
             <h2 id="h-todo" className="mon-h2">Still to do <span className="mon-gc">{others.length}</span></h2>
@@ -262,9 +262,7 @@ function Actions({ safe, st, setStatus, view, bookingFor, sel }: Ctx & { sel: st
               <dl className="mon-dl">
                 <dt>Why</dt><dd>{cur.why}</dd>
                 <dt>Do this</dt><dd>{cur.doThis}</dd>
-                <dt>Missing or invalid <small>(Jade&rsquo;s core fields: name, phone, intent, booked status)</small></dt>
-                <dd>{cur.missing.length ? <ul className="mon-miss">{cur.missing.map((m) => <li key={m}>{m}</li>)}</ul> : 'None — all four core fields are present.'}</dd>
-                {cur.blocked.length > 0 && <><dt>Blocked steps</dt><dd><ul className="mon-miss blocked">{cur.blocked.map((m) => <li key={m}>{m}</li>)}</ul></dd></>}
+                {cur.blocked.length > 0 && <><dt>Contact issue</dt><dd><ul className="mon-miss blocked">{cur.blocked.map((m) => <li key={m}>{m}</li>)}</ul></dd></>}
                 {cur.category === 'win_back' && <><dt>Before offering a time</dt><dd>Confirm the patient’s days and time window, practitioner flexibility, appointment type and duration, and check the live diary.</dd></>}
               </dl>
               <div className="mon-dcontact">
@@ -275,11 +273,10 @@ function Actions({ safe, st, setStatus, view, bookingFor, sel }: Ctx & { sel: st
                 <button type="button" className="mon-btn primary" disabled={s === 'handled'} onClick={() => setStatus(cur.id, 'handled')}>Mark handled</button>
                 <button type="button" className="mon-btn" disabled={s === 'new'} onClick={() => setStatus(cur.id, 'new')}>Reopen</button>
               </div>
-              <p className="mon-proto">Prototype: status is kept for this session only; no call is placed and nothing is written to a clinic system.</p>
               <div className="mon-links">
-                {bk ? <a className="mon-lnk" href={`#appointments/${bk.callId}`}>Related appointment → <span className="mon-muted">{bk.label}</span></a> : <span className="mon-norec">No related appointment</span>}
+                {bk ? <a className="mon-lnk" href={`#appointments/${bk.callId}`}>Related appointment → <span className="mon-muted">{bk.label}</span></a> : null}
                 <div>
-                  <span className="mon-muted">Call evidence ({evidence.length} call{evidence.length === 1 ? '' : 's'}):</span>{' '}
+                  <span className="mon-muted">Related calls ({evidence.length}):</span>{' '}
                   {evidence.map((c) => <a key={c.id} className="mon-lnk mon-chip" href={`#calls/${c.id}`}>{c.id} · {c.timeLabel} →</a>)}
                 </div>
               </div>
@@ -300,7 +297,7 @@ function Calls({ safe, st, view, actionFor, revealed, toggleReveal, sel, filter,
   const selHidden = sel && calls.some((c) => c.id === sel) && !shown.some((c) => c.id === sel);
   return (
     <>
-      <h1 className="mon-h1">Call summaries <span>· {calls.length} calls, administrative facts only</span></h1>
+      <h1 className="mon-h1">Call summaries <span>· {calls.length} calls</span></h1>
       <div className="mon-chips" role="group" aria-label="Filter calls">
         {FILTERS.map((f) => (
           <button key={f.id} type="button" className={`mon-fchip${filter === f.id ? ' on' : ''}`} aria-pressed={filter === f.id} onClick={() => setFilter(f.id)}>
@@ -323,17 +320,16 @@ function Calls({ safe, st, view, actionFor, revealed, toggleReveal, sel, filter,
                   <div className="mon-c2">
                     <div><strong>{safe ? c.name : c.fullName ?? c.name}</strong>{c.fullName === null && null}</div>
                     <div className="mon-b-ph num">{c.fullPhone ? (safe ? c.phone : c.fullPhone) : 'Number not provided'}</div>
-                    {c.missing.length > 0 && <span className="mon-issue">Data issue: missing {c.missing.join(', ')}</span>}
                   </div>
                   <div className="mon-c3">
-                    <div><b>{c.intentWords}</b> · Outcome: {c.outcomeWords.toLowerCase()}</div>
+                    <div><b>{c.intentWords}</b> · {c.outcomeWords}</div>
                     <p className="mon-sum">
-                      {hide ? <><em className="mon-muted">Summary hidden by default.</em> <button type="button" className="mon-link" onClick={() => toggleReveal(c.id)}>Show summary</button></> : <>{c.adminSummary}{c.withheld && <em className="mon-withheld"> (summary withheld: may contain clinical detail)</em>}</>}
+                      {hide ? <button type="button" className="mon-link" onClick={() => toggleReveal(c.id)}>Show summary</button> : c.adminSummary}
                     </p>
                     <div className="mon-rec">{c.recording ? <span className="mon-recok">Recording available</span> : <span className="mon-norec">No recording</span>}</div>
                   </div>
                   <div className="mon-c4">
-                    {a ? <a className="mon-lnk" href={`#actions/${a.id}`}>Staff action → <StatusPill s={st(a.id)} /></a> : <span className="mon-norec">No linked action</span>}
+                    {a ? <a className="mon-lnk" href={`#actions/${a.id}`}>Staff action → <StatusPill s={st(a.id)} /></a> : null}
                     {b ? <a className="mon-lnk" href={`#appointments/${b.callId}`}>Appointment →</a> : null}
                   </div>
                 </div>
@@ -342,10 +338,6 @@ function Calls({ safe, st, view, actionFor, revealed, toggleReveal, sel, filter,
           })}
         </ul>
       )}
-      <details className="mon-left">
-        <summary>Data notes ({dataIssues.length})</summary>
-        {dataIssues.length ? <ul>{dataIssues.map((d) => <li key={d}>{d}</li>)}</ul> : <p className="mon-none">No data problems found.</p>}
-      </details>
     </>
   );
 }
