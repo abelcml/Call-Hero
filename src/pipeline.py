@@ -171,7 +171,7 @@ def derive_batch(payload: dict[str, Any]) -> DerivedBatch:
         if _booking_result(source.get("outcome")) is None:
             add_issue(call_id, "missing_booking_result", "outcome")
         if source.get("flagged") == "bad_data" or source.get("outcome") == "failed_callback_number":
-            add_issue(call_id, "callback_number_invalid", "caller_number")
+            add_issue(call_id, "callback_number_invalid", "callback_number")
 
         call_record = CallEventRecord(
             id=call_id,
