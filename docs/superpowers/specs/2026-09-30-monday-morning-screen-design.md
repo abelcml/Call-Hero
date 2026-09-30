@@ -20,6 +20,8 @@ A compact priority alert remains visible without replacing the appointment list.
 
 The challenge brief says Jade captures a caller's name, phone, intent and whether an appointment was made. It does not capture or store symptoms, health information, Medicare numbers or other clinical details as ordinary data. If a caller volunteers clinical information, the screen may show a neutral practitioner-follow-up flag, but not the clinical text. The screen must remain useful on a phone, with missing information, and when recordings are unavailable. Front-desk staff and a patient nearby may see the screen.
 
+For every call, check those four categories individually. If any is absent, show a `Data incomplete` marker and name the missing field. An explicit `not booked` result is present information, not a missing result. Missing information is a data issue; it becomes a staff follow-up only when it affects an unresolved matter or blocks an action. For example, a hang-up without a usable name can be flagged as incomplete without creating an automatic callback task.
+
 The provided `weekend-calls.pdf` describes 31 call events. It is a source for regression examples, not a fixed input size. The repository's existing `data/weekend_calls.json` is a separate synthetic array and does not contain all fields shown in that PDF. The original JSON corresponding to the PDF has not been supplied in this repository. Counts shown in a demo must name the dataset from which they were calculated.
 
 The brief allows a clickable prototype and does not require live telephony, a production database, or a Cliniko integration. Do not describe a prototype click as a real callback or an appointment written to Cliniko.
@@ -68,7 +70,7 @@ Treat **call events**, **contact matters**, **appointments**, and **staff work i
 The processing order is:
 
 1. Read the clinic configuration and call events; validate structure and preserve allowed source values and source IDs.
-2. Mark each field as known, missing, invalid, conflicting, or unverified. Do not invent a name, phone digit, appointment time, weekday, or clinician.
+2. Check name, phone, intent, and booking result on every call; create a field-specific data issue for each missing category. Then mark other fields as known, missing, invalid, conflicting, or unverified. Do not invent a name, phone digit, appointment time, weekday, or clinician.
 3. Link call events that concern the same matter and find its latest supported state. A later booking can close an earlier “no availability” reminder for that matter; it cannot close a separate complaint or practitioner-follow-up item.
 4. Build one appointment row for each source booking. Show its validation status separately from the source outcome.
 5. Build unresolved human work items, assign an explainable priority category, and show the reason and next action.
