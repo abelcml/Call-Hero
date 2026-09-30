@@ -1,6 +1,6 @@
 # Monday Morning Screen — web app (Next.js)
 
-Live: https://ai-front-desk-black.vercel.app
+Live: https://call-hero-monday-screen.vercel.app
 
 Three linked views per `docs/MONDAY_MORNING_SCREEN_SPEC.md` §9–10: **Appointments · Staff actions · Call summaries**.
 
