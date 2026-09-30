@@ -4,7 +4,7 @@
 >
 > This note assumes Call Hero is primarily an AI front-desk / booking operations product rather than a healthcare decision-support system.
 
-This direction is a possible action inside the **one-screen, 90-second Monday Morning Screen** brief. The current screen design keeps the booked-appointment list as its main area; booking recovery would appear as a reviewable action, not replace that agreed layout. The 31-call JSON shared in the project discussion and the repository's `data/weekend_calls.json` are different datasets. Examples below refer to the shared 31-call JSON; they are not claims about the current app's output.
+This direction is a possible action inside the **one-screen, 90-second Monday Morning Screen** brief. The current screen design keeps the booked-appointment list as its main area; booking recovery would appear as a reviewable action, not replace that agreed layout. The 31-call JSON shared in the project discussion and the repository's `data/weekend_calls.json` are different datasets. Examples below refer to the shared 31-call JSON; they are not claims about the current app's output. For the demo narrative, treat the shared data's year as a fixture typo: **14 November 2025 is Friday and 17 November 2025 is Monday**. This correction does not verify live appointment availability.
 
 ## 1. Core idea
 
@@ -40,7 +40,7 @@ The shared 31-call JSON supports these observations:
 - `c024` and `c026`: Grace tried twice for an appointment before month-end, found nothing suitable, and asked about a waiting list. Her exact days, times, practitioner flexibility, and notice requirement are unknown.
 - `c011`, `c013`, and `c017`: Chris tried twice without success, then booked. He should not remain in an unresolved booking queue.
 
-This creates a useful **review opportunity**: check whether Sarah's former slot is actually open, then ask whether David or Grace could take it. The source does not establish that either patient is eligible. It also labels `2026-11-17` as Monday although that ISO date is Tuesday, so the slot's date must be reconciled before any offer.
+This creates a useful **review opportunity**: check whether Sarah's former Monday 9:00 slot is actually open, then ask whether David or Grace could take it. The source does not establish that either patient is eligible.
 
 ## 3. Proposed architecture
 
@@ -136,7 +136,7 @@ show:
 
     TODAY'S BOOKING OPPORTUNITIES
 
-    9:00 AM cancellation recorded — calendar/date needs checking
+    Monday 9:00 AM cancellation recorded — check live calendar
     David: wanted an appointment this week; availability unknown
     Grace: requested a waiting list; availability unknown
 
@@ -192,7 +192,7 @@ If the answer to these is "we already do this", this direction should be dropped
 For the hackathon, the smallest convincing prototype is:
 
 1. link repeat calls and remove booking requests later resolved by a booking;
-2. surface one cancellation as a **potential** opening, with its date/calendar uncertainty;
+2. surface one cancellation as a **potential** opening, pending live-calendar confirmation;
 3. show David and Grace as possible contacts, with the missing eligibility information beside each;
 4. let the owner review the slot and record a follow-up action; update the on-screen state after that action.
 

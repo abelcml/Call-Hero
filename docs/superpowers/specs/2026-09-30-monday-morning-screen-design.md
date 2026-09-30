@@ -85,7 +85,7 @@ The demo rules must work for 0, 1, 31, or more calls. Unknown outcomes and partl
 
 The PDF data includes 31 calls, 12 outcomes marked `booked`, and 26 distinct caller numbers. These are **call, outcome, and number counts**, not verified patient or live-calendar counts. Multiple calls from one contact may end in a booking, while another matter from that contact can remain open. A cancellation followed by a new booking can close the rebooking matter while leaving the cancelled slot as a separate **possible** schedule change.
 
-The narrative weekdays and ISO dates conflict in the supplied PDF. Some source bookings also fall on days outside the stated Monday–Friday opening schedule. Do not quietly convert an inconsistent source date into a confident label such as `Today at 9:00 am`. Preserve the source, flag the contradiction, and ask staff to verify the appointment. A cancelled time is not guaranteed to be available without a current calendar. A caller ID and an incomplete verbal callback number are different pieces of evidence; do not present either as a verified replacement for the other.
+For this demo, the team treats the source year as a fixture typo and uses **Friday 14 to Monday 17 November 2025** as the working calendar. This is a documented demo assumption, not an inference made by the product for future datasets. Any remaining booking outside configured hours still needs review. A cancelled time is not guaranteed to be available without a current calendar. A caller ID and an incomplete verbal callback number are different pieces of evidence; do not present either as a verified replacement for the other.
 
 These examples test general rules. The UI must not hardcode an exact queue size, a fixed list of callers, or a presumed open slot.
 
