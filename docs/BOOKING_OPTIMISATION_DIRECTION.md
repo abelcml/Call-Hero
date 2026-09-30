@@ -4,9 +4,11 @@
 >
 > This note assumes Call Hero is primarily an AI front-desk / booking operations product rather than a healthcare decision-support system.
 
+This direction is a possible action inside the **one-screen, 90-second Monday Morning Screen** brief. The current screen design keeps the booked-appointment list as its main area; booking recovery would appear as a reviewable action, not replace that agreed layout. The 31-call JSON shared in the project discussion and the repository's `data/weekend_calls.json` are different datasets. Examples below refer to the shared 31-call JSON; they are not claims about the current app's output.
+
 ## 1. Core idea
 
-Jade already handles calls one at a time. A possible next step is to let Jade understand more of the **booking context across the whole clinic**:
+A possible next step is to connect booking information across calls and the clinic schedule. Whether Jade already does this is a question for Call Hero, not an established product gap. The proposed decision would use:
 
 - current schedule and open slots;
 - a caller's booking request and flexibility;
@@ -31,28 +33,14 @@ we also ask:
 
 ## 2. Example
 
-Suppose the weekend contains:
+The shared 31-call JSON supports these observations:
 
-    Friday:
-    Grace wants Monday morning -> no availability
+- `c002`: Sarah cancelled an appointment described as Monday 9:00; `c023` shows that she later booked a different date. Her rebooking closes her own callback need, but does not establish whether the original slot is now available in the live calendar.
+- `c007`: David wanted an appointment in the coming week, found nothing suitable, and said he would try elsewhere. His exact available times and current booking status are unknown.
+- `c024` and `c026`: Grace tried twice for an appointment before month-end, found nothing suitable, and asked about a waiting list. Her exact days, times, practitioner flexibility, and notice requirement are unknown.
+- `c011`, `c013`, and `c017`: Chris tried twice without success, then booked. He should not remain in an unresolved booking queue.
 
-    Saturday:
-    David wants Monday -> no availability
-
-    Sunday:
-    Sarah cancels Monday 9:00
-
-A call-by-call system sees three separate events.
-
-A system-level layer can connect them on Monday morning:
-
-    Monday 9:00 slot opened
-
-    Potential recovery candidates:
-    1. Grace — asked twice for Monday morning, flexible practitioner
-    2. David — wants Monday, but only after 3 pm
-
-The owner does not need to rediscover this manually.
+This creates a useful **review opportunity**: check whether Sarah's former slot is actually open, then ask whether David or Grace could take it. The source does not establish that either patient is eligible. It also labels `2026-11-17` as Monday although that ISO date is Tuesday, so the slot's date must be reconciled before any offer.
 
 ## 3. Proposed architecture
 
@@ -93,7 +81,7 @@ The LLM is useful for converting conversation into structured preferences. It do
 
 ## 4. Scheduling as an optimisation problem
 
-For patient i and slot j, define a binary decision variable x_ij that is 1 when patient i is assigned to slot j and 0 otherwise.
+For a future system with verified patient preferences and a live schedule, patient-slot allocation could be formulated as an optimisation problem. For patient i and slot j, define a binary decision variable x_ij that is 1 when patient i is assigned to slot j and 0 otherwise.
 
 A simple objective is to maximise total patient-slot compatibility:
 
@@ -101,13 +89,13 @@ A simple objective is to maximise total patient-slot compatibility:
 
 where s_ij is a patient-slot compatibility score.
 
-Possible score components:
+Possible score components **after hard eligibility checks**:
 
 - time preference fit;
 - preferred practitioner fit;
 - waiting time;
 - repeat booking attempts;
-- likelihood of conversion.
+- likelihood of conversion, only if supported by an evaluated estimate.
 
 Subject to constraints such as:
 
@@ -116,13 +104,27 @@ Subject to constraints such as:
 - patient availability must match the slot;
 - practitioner / appointment type must be compatible;
 - slot duration must be sufficient;
-- patients already resolved should not be re-targeted.
+- patients already resolved should not be re-targeted;
+- the patient must have agreed to receive an offer through the selected channel, and the contact route must be usable.
 
-For the hackathon prototype, this does **not** need to become a full production solver. A transparent compatibility score and ranked candidate list may be enough to prove the product concept.
+An offer is not an assignment: sending an invitation, receiving acceptance, and recording a confirmed booking are distinct states. The supplied 31-call JSON lacks several hard-constraint inputs, so a numeric compatibility score or "best candidate" would imply unsupported precision. For this hackathon data, show possible contacts with explicit unknowns and let a person verify eligibility. A solver or ranked eligible list belongs to a later demo with those inputs present.
+
+### Information Jade would need when no suitable booking is found
+
+Ask only for information the booking system and conversation have not already supplied:
+
+1. Whether the caller wants to receive cancellation offers, and through which contact channel.
+2. The appointment type or booking requirement, if not already established.
+3. Acceptable dates and time windows, including any firm exclusions.
+4. Whether the requested practitioner is required or another suitable practitioner is acceptable.
+5. Minimum notice needed to attend a newly opened slot.
+6. Confirmation of the number or other contact route to use; a caller-ID number and an unconfirmed spoken callback number are different evidence.
+
+Store unknown answers as unknown rather than treating them as flexible. The current 31-call JSON does not contain these structured answers, so this is a proposed future intake step, not a feature Jade is known to perform today.
 
 ## 5. Why this matters for the Monday Morning Screen
 
-The dashboard could evolve from a call summary into a **booking control tower**.
+The Monday screen could surface a booking recovery action alongside its existing booked-appointment list and higher-priority work.
 
 Instead of:
 
@@ -134,18 +136,13 @@ show:
 
     TODAY'S BOOKING OPPORTUNITIES
 
-    9:00 AM slot opened
-    2 previous callers may fit
+    9:00 AM cancellation recorded — calendar/date needs checking
+    David: wanted an appointment this week; availability unknown
+    Grace: requested a waiting list; availability unknown
 
-    Best candidate:
-    Grace Scott
-    - requested Monday morning twice
-    - flexible practitioner
-    - currently unbooked
+    [Check slot and contact preferences]
 
-    [Review and offer slot]
-
-This connects events across the weekend and converts raw activity into a specific action.
+This connects events across the weekend and gives the owner a specific next step without asserting a confirmed match.
 
 ## 6. Product framing
 
@@ -194,30 +191,13 @@ If the answer to these is "we already do this", this direction should be dropped
 
 For the hackathon, the smallest convincing prototype is:
 
-1. parse weekend calls into structured booking preferences;
-2. detect one newly opened slot;
-3. rank unresolved callers against that slot;
-4. show the best candidate and **why**;
-5. let the owner mark the recommendation as reviewed / handled.
+1. link repeat calls and remove booking requests later resolved by a booking;
+2. surface one cancellation as a **potential** opening, with its date/calendar uncertainty;
+3. show David and Grace as possible contacts, with the missing eligibility information beside each;
+4. let the owner review the slot and record a follow-up action; update the on-screen state after that action.
 
 No live telephony or production database is required to demonstrate the idea.
 
-## 10. Open team question
+## 10. Fit with the current screen design
 
-Should the Monday Morning Screen be primarily:
-
-**A. Action-first dashboard**
-- urgent operational items;
-- booking recovery opportunities;
-- schedule changes;
-- Jade's completed work.
-
-or
-
-**B. Booking control tower**
-- today's schedule as the main object;
-- open slots and conflicts;
-- unresolved callers ranked against those slots;
-- action recommendations generated from the full weekend state.
-
-Both satisfy the brief, but B is the more ambitious product extension.
+The existing screen specification puts the **booked-appointment list** in the main area and reserves visible space for the most important human action. Booking recovery can occupy one such action after the urgent and unresolved items have been considered. A full booking control tower remains a separate product direction and should not silently replace the current one-screen design.
