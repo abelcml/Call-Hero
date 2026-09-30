@@ -18,7 +18,10 @@ The screen compresses 31 conversations into three layers:
 2. **What needs attention now?** — prioritised action queue.
 3. **What can wait?** — resolved / low-priority calls stay out of the owner's way.
 
-The prototype deliberately separates **decision logic** from the UI so we can later replace the simple scoring rules with JEV / an LLM classifier without redesigning the dashboard.
+The prototype separates source ingestion, safe domain records, persistence and
+screen queries. The first-screen booking overview and third-screen
+administrative summary share one repository contract; the second-screen owner
+can add workflow rules through the shared `work_items` schema.
 
 ## Team discussion
 
@@ -37,6 +40,15 @@ This is intentionally marked as an **exploratory direction**, not a committed im
     pip install -r requirements.txt
     streamlit run app.py
 
+## Shared logic and Supabase
+
+The repository now includes a privacy-filtered transformation pipeline, a
+reproducible Supabase migration and an idempotent importer. Raw call `summary`
+text is not persisted or returned to the screen models.
+
+See [docs/LOGIC_LAYER.md](docs/LOGIC_LAYER.md) for the schema, setup, importer
+and the exact first-/second-/third-screen query contracts.
+
 ## Current structure
 
     .
@@ -46,8 +58,17 @@ This is intentionally marked as an **exploratory direction**, not a committed im
     │   └── weekend_calls.json
     ├── docs/
     │   ├── BOOKING_OPTIMISATION_DIRECTION.md
+    │   ├── LOGIC_LAYER.md
     │   └── MONDAY_MORNING_SCREEN_SPEC.md
+    ├── scripts/
+    │   └── ingest_calls.py
+    ├── supabase/migrations/
+    │   └── 20260930000000_create_callhero_logic.sql
     └── src/
+        ├── domain.py
+        ├── pipeline.py
+        ├── repository.py
+        ├── supabase_repository.py
         └── prioritise.py
 
 ## Next build steps
@@ -56,5 +77,5 @@ This is intentionally marked as an **exploratory direction**, not a committed im
 - Validate the priority logic against Call Hero's actual Jade rules.
 - Decide whether the screen remains action-first or becomes a booking-control-tower prototype.
 - Add structured AI classification (JEV / LLM) only where rules are insufficient.
-- Add action persistence (Supabase) if useful for the live demo.
+- Connect the UI to the shared repository contract.
 - Polish the single-screen hierarchy after we learn the judging criteria.
