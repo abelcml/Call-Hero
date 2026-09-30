@@ -4,6 +4,8 @@
 
 > Design direction: the **booked appointments list is the main content of the first screen**. The owner sees each name, phone field, appointment time, and any uncertainty or need for human review. Detailed business and data rules are in [`MONDAY_MORNING_SCREEN_SPEC.md`](../../MONDAY_MORNING_SCREEN_SPEC.md).
 
+The prototype has three linked views: **Appointments / Staff actions / Call summaries**. The first view must independently answer the 90-second challenge; the other two provide processing details and existing administrative call content.
+
 ## The problem and the 90-second decision
 
 Jade answered calls while Harbourside Dental was closed. At 8:00 am on Monday, the practice owner has 90 seconds to understand the effect on appointments and decide what staff should handle first. The deliverable is one usable screen, not a transcript inbox.
@@ -32,6 +34,7 @@ Use a dark background and one screen with a clear reading path. The text below i
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────────┐
+│ Appointments / Staff actions / Call summaries                          │
 │ Monday 08:00  ·  weekend calls: [calculated]  ·  data status: [status] │
 │ FIRST ACTION: [reason] → [next step]                    [Open details] │
 ├──────────────────────────────────────────┬──────────────────────────────┤
@@ -88,14 +91,15 @@ These examples test general rules. The UI must not hardcode an exact queue size,
 
 ## Prototype interactions
 
-The first version needs a short, demonstrable loop:
+All three views share clickable navigation. A navigation tab opens its list or unselected state; a record-specific link also carries the selected appointment, work item, or call and its supported ID relationships.
 
-1. Open a booking row and see its non-clinical details, source call IDs, and any missing or conflicting fields.
-2. Open an unresolved work item and see why it is prioritised, the next action, and whether a usable contact number is available.
-3. Mark an item in progress or handled and see its state and counts change; allow a mistaken action to be reopened. If state only survives the current session, say so.
-4. Open the remaining calls for audit without turning the first screen into a transcript list.
+1. **Appointments:** show the booked list, source and validation status, and first staff action. A row links to its staff-action details and related call summaries when a reliable relationship exists.
+2. **Staff actions:** show the selected matter's reason, missing fields, action blockers and available operations. Mark it in progress or handled, or reopen it. Show links back to the appointment and related calls.
+3. **Call summaries:** show source-supported administrative content and outcomes, including parking, insurance, fee questions and wrong-number calls. Already answered questions remain here without becoming new staff tasks. This view presents existing data; it does not invent dialogue or create a new conversation archive.
 
-The workflow works without recordings. Only offer playback when an authorised, actual audio resource is present; the PDF provides availability flags but no audio file or URL.
+The related-record links must not guess identity from a shared phone number. With no reliable relationship, show an unavailable link and reason; ordinary view navigation stays usable. Returning preserves the original filter and selected record, and where supported the list position. A staff update refreshes the same matter's labels and counts across all three views; separate matters for the same contact stay open.
+
+Administrative summaries must exclude clinical details and must not render raw mixed-content `summary` fields. With no usable administrative content, show that it was not provided. The workflow works without recordings; only offer playback when an authorised, actual audio resource is present. The PDF provides availability flags but no audio file or URL. If action state only survives the current session, say so.
 
 ## Ninety-second demo script
 
@@ -110,5 +114,7 @@ This demonstrates Jade's value while making the owner's next action explicit. It
 ## Success criteria
 
 Without opening the full call history, a viewer can identify a booked person's name, contact field and appointment time; distinguish a booking with no known issue from one requiring review; identify the first staff action and why it is first; and find the remaining unfinished work. The same flow remains usable on a phone and when fields or recordings are missing.
+
+The three navigation entries and related-record links must actually switch to the correct view and record. Updating or reopening a matter must synchronise its status across views and returning must preserve the user's context.
 
 The detailed acceptance cases, open business decisions, three-person responsibility split, and submission checklist live in [`MONDAY_MORNING_SCREEN_SPEC.md`](../../MONDAY_MORNING_SCREEN_SPEC.md). This document describes the intended demo screen; it does not claim that the current Streamlit app already provides these behaviours.
