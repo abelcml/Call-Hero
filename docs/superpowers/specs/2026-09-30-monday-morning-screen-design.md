@@ -55,14 +55,15 @@ The top alert shows one concrete next action and its reason. The remaining work 
 
 ### Status language and colour
 
-| Meaning | Suggested treatment | Required text |
-| --- | --- | --- |
-| Booking recorded, no known issue | Quiet neutral row | `Booked by Jade` or `Booking recorded` |
-| Missing or contradictory data | Amber row marker | The exact field and reason, e.g. `Time missing` |
-| Human action needed | Purple or blue marker | The staff action, e.g. `Verify booking` |
-| Source explicitly marked urgent | Red priority marker | `Source marked urgent; practitioner review` |
+Use only three emphasis colours across all three views. Dark backgrounds and ordinary light text are neutral styling, not additional status colours.
 
-Colour is never the only signal: add a word label and, where useful, an icon. Distinguish data quality from business priority. An urgent case with no usable callback number stays urgent and also shows `Contact blocked`.
+| Meaning | Treatment | Required text |
+| --- | --- | --- |
+| Unfinished matter explicitly marked urgent by the source | Red | `Urgent action` / `紧急处理`, with source evidence |
+| Data check, callback or other unfinished staff action | Yellow | `Needs action` / `需要处理`, with the exact reason such as `Phone missing`, `Waiting-list callback` or `Appointment time conflict` |
+| Booking recorded or matter completed | Teal | `Booked` / `已预约` or `Completed` / `已完成`, according to the actual state |
+
+Colour is never the only signal: add a word label and, where useful, an icon. Keep priority and routine follow-up distinctions in text and sorting rather than adding colours. For a row with several labels, use red before yellow before teal as its emphasis: a booked appointment with missing details keeps its booking label but the issue is highlighted yellow; an urgent matter with an unusable number remains red and also says `Contact blocked`. Booked does not mean separate staff work is completed. Ordinary reference calls use neutral text.
 
 The name and phone columns must be easy for staff to use without making private details large enough for someone at the counter to read casually. The exact default phone masking and reveal behaviour remains a team decision; the phone field must still be present and the complete usable number accessible to an authorised staff member. Do not place clinical free text in a row, tooltip, details panel, export, or error message. A `recording_available` flag alone is not a playable recording.
 
@@ -94,12 +95,24 @@ These examples test general rules. The UI must not hardcode an exact queue size,
 All three views share clickable navigation. A navigation tab opens its list or unselected state; a record-specific link also carries the selected appointment, work item, or call and its supported ID relationships.
 
 1. **Appointments:** show the booked list, source and validation status, and first staff action. A row links to its staff-action details and related call summaries when a reliable relationship exists.
-2. **Staff actions:** show the selected matter's reason, missing fields, action blockers and available operations. Mark it in progress or handled, or reopen it. Show links back to the appointment and related calls.
+2. **Staff actions:** start with unfinished matters and open the selected matter's details. Filter by booked-but-needs-verification, unbooked/callback or waiting list, cancellation/rescheduling, other staff matters, or unclassified data issues. Show each reason, missing field, action blocker and available operation. Mark it in progress, waiting for a response, or handled; allow reopening. Show links back to the appointment and related calls.
 3. **Call summaries:** show source-supported administrative content and outcomes, including parking, insurance, fee questions and wrong-number calls. Already answered questions remain here without becoming new staff tasks. This view presents existing data; it does not invent dialogue or create a new conversation archive.
 
 The related-record links must not guess identity from a shared phone number. With no reliable relationship, show an unavailable link and reason; ordinary view navigation stays usable. Returning preserves the original filter and selected record, and where supported the list position. A staff update refreshes the same matter's labels and counts across all three views; separate matters for the same contact stay open.
 
 Administrative summaries must exclude clinical details and must not render raw mixed-content `summary` fields. With no usable administrative content, show that it was not provided. The workflow works without recordings; only offer playback when an authorised, actual audio resource is present. The PDF provides availability flags but no audio file or URL. If action state only survives the current session, say so.
+
+### Staff-action sorting and priority
+
+Show distinct columns for the first unresolved call time, most recent call time, appointment time, and any source-supported response deadline. Default sorting is action priority, then an established deadline, then the oldest unresolved matter, with a stable ID for ties. Offer labelled sorts for newest call, longest waiting, nearest appointment, and response deadline. Missing or conflicting times remain labelled and do not become invented dates. The highest-priority unresolved source-marked urgent alert stays visible even when the user selects a different list sort.
+
+Keep booking state, field quality, task state and priority separate. A source-marked urgent matter takes first place; unresolved repeated complaints, unfulfilled callback commitments and verified time-sensitive conflicts require prompt staff review; ordinary data checks, waiting-list requests and booking follow-up receive routine attention. Answered questions and settled matters stay informational. Unknown or conflicting evidence is marked unclassified and is not presented as safe. Practitioner notes and a generic `priority` flag are not automatically `urgent`.
+
+An unresolved no-availability request appears as a booking-follow-up candidate. Distinguish a promised callback, a caller-requested callback/waiting list, and a staff-suggested contact. Check the contact route and contact basis before a call; a candidate is not proof of consent or an existing promise. A supported later booking closes only the earlier request for that same matter.
+
+Every call summary can show the original source urgency flag and the current associated matter's handling priority with its reason. This is administrative prioritisation, not clinical triage. A historical failed booking later resolved by a booking must not create a new callback task. More than one reason can apply, so retain all reasons and use the highest supported active priority.
+
+Dialling, an unanswered call and a failed save do not complete a matter. A waiting or contact-blocked matter remains unfinished and visible; a new related unresolved event can reopen it. Staff task changes do not overwrite Jade's original call outcome. The detailed categories, fields and acceptance cases are specified in the main requirements document.
 
 ## Ninety-second demo script
 
