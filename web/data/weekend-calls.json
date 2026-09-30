@@ -1,0 +1,519 @@
+{
+  "clinic": {
+    "name": "Harbourside Dental",
+    "suburb": "Balmain",
+    "state": "NSW",
+    "practitioners": [
+      "Dr Rebecca Foster",
+      "Dr Mark Bennett"
+    ],
+    "business_hours": "Mon-Fri 8:00-17:00, closed weekends",
+    "recording_enabled": true
+  },
+  "period": {
+    "label": "Weekend of 14-17 November 2026",
+    "from": "2026-11-14T17:00:00+11:00",
+    "to": "2026-11-17T08:00:00+11:00",
+    "note": "Clinic closed from Friday 5pm. This is everything Jade handled while nobody was there."
+  },
+  "calls": [
+    {
+      "id": "c001",
+      "started_at": "2026-11-14T17:04:22+11:00",
+      "duration_seconds": 94,
+      "caller_number": "+61412887301",
+      "caller_name": "John Smith",
+      "outcome": "booked",
+      "intent": "new_patient",
+      "summary": "New patient, wants a check-up and clean. Mentioned he hasn't been to a dentist in about four years.",
+      "appointment": {
+        "date": "2026-11-19",
+        "time": "14:30",
+        "type": "Check-up and clean",
+        "practitioner": "Dr Rebecca Foster"
+      },
+      "recording_available": true,
+      "sentiment": "positive"
+    },
+    {
+      "id": "c002",
+      "started_at": "2026-11-14T17:41:08+11:00",
+      "duration_seconds": 38,
+      "caller_number": "+61498220156",
+      "caller_name": "Sarah Johnson",
+      "outcome": "cancelled",
+      "intent": "cancellation",
+      "summary": "Cancelled Monday 9:00am appointment. Work conflict. Did not rebook.",
+      "appointment": {
+        "date": "2026-11-17",
+        "time": "09:00",
+        "type": "Check-up",
+        "practitioner": "Dr Rebecca Foster",
+        "action": "cancelled"
+      },
+      "recording_available": true,
+      "sentiment": "neutral"
+    },
+    {
+      "id": "c003",
+      "started_at": "2026-11-14T18:12:55+11:00",
+      "duration_seconds": 61,
+      "caller_number": "+61403771842",
+      "caller_name": "Emily Davis",
+      "outcome": "booked",
+      "intent": "new_patient",
+      "summary": "New patient. Moved to the area recently, looking for a regular dentist.",
+      "appointment": {
+        "date": "2026-11-20",
+        "time": "10:00",
+        "type": "New patient exam",
+        "practitioner": "Dr Mark Bennett"
+      },
+      "recording_available": true,
+      "sentiment": "positive"
+    },
+    {
+      "id": "c004",
+      "started_at": "2026-11-14T19:33:17+11:00",
+      "duration_seconds": 22,
+      "caller_number": "+61455019927",
+      "caller_name": null,
+      "outcome": "hung_up",
+      "intent": "unknown",
+      "summary": "Caller hung up shortly after Jade's greeting. No information captured.",
+      "appointment": null,
+      "recording_available": true,
+      "sentiment": "neutral"
+    },
+    {
+      "id": "c005",
+      "started_at": "2026-11-14T20:07:44+11:00",
+      "duration_seconds": 118,
+      "caller_number": "+61421665338",
+      "caller_name": "Michael Brown",
+      "outcome": "message_taken",
+      "intent": "billing_query",
+      "summary": "Disputing an invoice from his last visit. Says he was charged for a service he didn't receive. Wants a callback from the practice manager.",
+      "appointment": null,
+      "recording_available": true,
+      "sentiment": "negative",
+      "flagged": "complaint"
+    },
+    {
+      "id": "c006",
+      "started_at": "2026-11-14T21:19:02+11:00",
+      "duration_seconds": 47,
+      "caller_number": "+61407449183",
+      "caller_name": "Jessica Wilson",
+      "outcome": "booked",
+      "intent": "existing_patient",
+      "summary": "Existing patient, wants to bring her six-month check-up forward.",
+      "appointment": {
+        "date": "2026-11-21",
+        "time": "16:00",
+        "type": "Check-up and clean",
+        "practitioner": "Dr Rebecca Foster"
+      },
+      "recording_available": true,
+      "sentiment": "positive"
+    },
+    {
+      "id": "c007",
+      "started_at": "2026-11-15T08:22:39+11:00",
+      "duration_seconds": 73,
+      "caller_number": "+61438902114",
+      "caller_name": "David Miller",
+      "outcome": "no_availability",
+      "intent": "new_patient",
+      "summary": "Wanted an appointment this coming week. Nothing suitable available. Said he would 'try somewhere else' before ending the call.",
+      "appointment": null,
+      "recording_available": true,
+      "sentiment": "negative",
+      "flagged": "lost_opportunity"
+    },
+    {
+      "id": "c008",
+      "started_at": "2026-11-15T09:15:51+11:00",
+      "duration_seconds": 29,
+      "caller_number": "+61466330887",
+      "caller_name": "Amanda Taylor",
+      "outcome": "question_answered",
+      "intent": "clinic_question",
+      "summary": "Asked about parking. Jade confirmed street parking and the Wilson car park two doors down.",
+      "appointment": null,
+      "recording_available": true,
+      "sentiment": "positive"
+    },
+    {
+      "id": "c009",
+      "started_at": "2026-11-15T09:47:13+11:00",
+      "duration_seconds": 52,
+      "caller_number": "+61491775206",
+      "caller_name": "James Anderson",
+      "outcome": "failed_callback_number",
+      "intent": "new_patient",
+      "summary": "Wanted to book a first appointment. Provided a callback number that appears to be one digit short — captured as 041277520. Could not confirm before the call dropped.",
+      "appointment": null,
+      "recording_available": true,
+      "sentiment": "neutral",
+      "flagged": "bad_data"
+    },
+    {
+      "id": "c010",
+      "started_at": "2026-11-15T10:33:28+11:00",
+      "duration_seconds": 88,
+      "caller_number": "+61402118644",
+      "caller_name": "Laura Thomas",
+      "outcome": "booked",
+      "intent": "new_patient",
+      "summary": "New patient. Asked whether the clinic does children's appointments — confirmed yes. Booking for her son.",
+      "appointment": {
+        "date": "2026-11-22",
+        "time": "09:30",
+        "type": "Children's check-up",
+        "practitioner": "Dr Mark Bennett"
+      },
+      "recording_available": true,
+      "sentiment": "positive"
+    },
+    {
+      "id": "c011",
+      "started_at": "2026-11-15T11:02:09+11:00",
+      "duration_seconds": 41,
+      "caller_number": "+61477283019",
+      "caller_name": "Chris Martin",
+      "outcome": "no_availability",
+      "intent": "new_patient",
+      "summary": "First attempt. Asked for anything available Monday or Tuesday. Nothing suitable. Said he would call back.",
+      "appointment": null,
+      "recording_available": true,
+      "sentiment": "neutral",
+      "repeat_caller": true
+    },
+    {
+      "id": "c012",
+      "started_at": "2026-11-15T11:58:44+11:00",
+      "duration_seconds": 19,
+      "caller_number": "+61413556722",
+      "caller_name": null,
+      "outcome": "wrong_number",
+      "intent": "unknown",
+      "summary": "Caller was trying to reach a veterinary clinic. Wrong number.",
+      "appointment": null,
+      "recording_available": true,
+      "sentiment": "neutral"
+    },
+    {
+      "id": "c013",
+      "started_at": "2026-11-15T13:24:36+11:00",
+      "duration_seconds": 66,
+      "caller_number": "+61477283019",
+      "caller_name": "Chris Martin",
+      "outcome": "no_availability",
+      "intent": "new_patient",
+      "summary": "Second attempt. Asked again about Monday or Tuesday availability. Still nothing suitable. Audibly frustrated.",
+      "appointment": null,
+      "recording_available": true,
+      "sentiment": "negative",
+      "repeat_caller": true
+    },
+    {
+      "id": "c014",
+      "started_at": "2026-11-15T14:11:57+11:00",
+      "duration_seconds": 103,
+      "caller_number": "+61434920651",
+      "caller_name": "Daniel Clark",
+      "outcome": "message_taken",
+      "intent": "out_of_scope",
+      "summary": "Asked about orthodontic treatment and clear aligners. The clinic does not offer orthodontics. Jade took a message and suggested the practice would call back with a referral.",
+      "appointment": null,
+      "recording_available": true,
+      "sentiment": "neutral",
+      "flagged": "service_not_offered"
+    },
+    {
+      "id": "c015",
+      "started_at": "2026-11-15T15:40:22+11:00",
+      "duration_seconds": 57,
+      "caller_number": "+61425887140",
+      "caller_name": "Rachel Lewis",
+      "outcome": "cancelled",
+      "intent": "cancellation",
+      "summary": "Cancelled Tuesday 11:00am. Family emergency. Asked to be called to rebook next week.",
+      "appointment": {
+        "date": "2026-11-18",
+        "time": "11:00",
+        "type": "Check-up and clean",
+        "practitioner": "Dr Rebecca Foster",
+        "action": "cancelled"
+      },
+      "recording_available": true,
+      "sentiment": "neutral",
+      "flagged": "rebook_requested"
+    },
+    {
+      "id": "c016",
+      "started_at": "2026-11-15T16:52:08+11:00",
+      "duration_seconds": 34,
+      "caller_number": "+61408117395",
+      "caller_name": "Matthew Walker",
+      "outcome": "question_answered",
+      "intent": "clinic_question",
+      "summary": "Asked whether the clinic accepts HCF. Jade confirmed yes and that HICAPS is available on site.",
+      "appointment": null,
+      "recording_available": true,
+      "sentiment": "positive"
+    },
+    {
+      "id": "c017",
+      "started_at": "2026-11-15T18:29:41+11:00",
+      "duration_seconds": 79,
+      "caller_number": "+61477283019",
+      "caller_name": "Chris Martin",
+      "outcome": "booked",
+      "intent": "new_patient",
+      "summary": "Third attempt. Accepted a Thursday afternoon slot after being unable to get Monday or Tuesday twice earlier today.",
+      "appointment": {
+        "date": "2026-11-20",
+        "time": "15:30",
+        "type": "New patient exam",
+        "practitioner": "Dr Rebecca Foster"
+      },
+      "recording_available": true,
+      "sentiment": "neutral",
+      "repeat_caller": true
+    },
+    {
+      "id": "c018",
+      "started_at": "2026-11-15T20:14:03+11:00",
+      "duration_seconds": 45,
+      "caller_number": "+61419663288",
+      "caller_name": "Emma Hall",
+      "outcome": "booked",
+      "intent": "existing_patient",
+      "summary": "Existing patient booking a routine clean.",
+      "appointment": {
+        "date": "2026-11-25",
+        "time": "08:30",
+        "type": "Clean",
+        "practitioner": "Dr Mark Bennett"
+      },
+      "recording_available": true,
+      "sentiment": "positive"
+    },
+    {
+      "id": "c019",
+      "started_at": "2026-11-16T02:14:37+11:00",
+      "duration_seconds": 126,
+      "caller_number": "+61452008914",
+      "caller_name": "Peter Young",
+      "outcome": "urgent_flagged",
+      "intent": "urgent",
+      "summary": "Called at 2:14am in significant pain. Jade advised that for a genuine emergency he should attend an emergency department, took his details, and flagged the call as urgent for first thing Monday.",
+      "appointment": null,
+      "recording_available": true,
+      "sentiment": "negative",
+      "flagged": "urgent"
+    },
+    {
+      "id": "c020",
+      "started_at": "2026-11-16T08:41:19+11:00",
+      "duration_seconds": 62,
+      "caller_number": "+61406229773",
+      "caller_name": "Olivia King",
+      "outcome": "booked",
+      "intent": "new_patient",
+      "summary": "New patient, referred by an existing patient. Wants a check-up and to discuss whitening.",
+      "appointment": {
+        "date": "2026-11-24",
+        "time": "11:00",
+        "type": "New patient exam",
+        "practitioner": "Dr Rebecca Foster"
+      },
+      "recording_available": true,
+      "sentiment": "positive"
+    },
+    {
+      "id": "c021",
+      "started_at": "2026-11-16T09:33:55+11:00",
+      "duration_seconds": 27,
+      "caller_number": "+61443891026",
+      "caller_name": null,
+      "outcome": "hung_up",
+      "intent": "unknown",
+      "summary": "Hung up during Jade's greeting. Nothing captured.",
+      "appointment": null,
+      "recording_available": true,
+      "sentiment": "neutral"
+    },
+    {
+      "id": "c022",
+      "started_at": "2026-11-16T10:18:42+11:00",
+      "duration_seconds": 95,
+      "caller_number": "+61417550284",
+      "caller_name": "Sophie Wright",
+      "outcome": "booked",
+      "intent": "new_patient",
+      "summary": "New patient. Nervous about dental visits, asked whether the practice is good with anxious patients. Jade confirmed and noted the concern.",
+      "appointment": {
+        "date": "2026-11-26",
+        "time": "13:00",
+        "type": "New patient exam",
+        "practitioner": "Dr Mark Bennett"
+      },
+      "recording_available": true,
+      "sentiment": "positive",
+      "flagged": "note_for_practitioner"
+    },
+    {
+      "id": "c023",
+      "started_at": "2026-11-16T11:05:13+11:00",
+      "duration_seconds": 33,
+      "caller_number": "+61498220156",
+      "caller_name": "Sarah Johnson",
+      "outcome": "booked",
+      "intent": "existing_patient",
+      "summary": "Rebooking the Monday appointment she cancelled on Friday evening.",
+      "appointment": {
+        "date": "2026-11-27",
+        "time": "09:00",
+        "type": "Check-up",
+        "practitioner": "Dr Rebecca Foster"
+      },
+      "recording_available": true,
+      "sentiment": "positive"
+    },
+    {
+      "id": "c024",
+      "started_at": "2026-11-16T12:47:29+11:00",
+      "duration_seconds": 71,
+      "caller_number": "+61429104778",
+      "caller_name": "Grace Scott",
+      "outcome": "no_availability",
+      "intent": "new_patient",
+      "summary": "First attempt. Wanted an appointment before the end of the month. Nothing available that suited.",
+      "appointment": null,
+      "recording_available": true,
+      "sentiment": "neutral",
+      "repeat_caller": true
+    },
+    {
+      "id": "c025",
+      "started_at": "2026-11-16T14:22:06+11:00",
+      "duration_seconds": 49,
+      "caller_number": "+61461337920",
+      "caller_name": "Ryan Baker",
+      "outcome": "question_answered",
+      "intent": "clinic_question",
+      "summary": "Asked about the gap fee for a check-up and clean with HCF cover. Jade gave the standard fee and explained the gap depends on individual cover.",
+      "appointment": null,
+      "recording_available": true,
+      "sentiment": "positive"
+    },
+    {
+      "id": "c026",
+      "started_at": "2026-11-16T15:58:51+11:00",
+      "duration_seconds": 84,
+      "caller_number": "+61429104778",
+      "caller_name": "Grace Scott",
+      "outcome": "no_availability",
+      "intent": "new_patient",
+      "summary": "Second attempt, three hours after the first. Same request. Still nothing available. Asked whether there was a waiting list — Jade took her details.",
+      "appointment": null,
+      "recording_available": true,
+      "sentiment": "negative",
+      "repeat_caller": true,
+      "flagged": "waitlist_requested"
+    },
+    {
+      "id": "c027",
+      "started_at": "2026-11-16T17:11:34+11:00",
+      "duration_seconds": 56,
+      "caller_number": "+61414778203",
+      "caller_name": "Andrew Green",
+      "outcome": "booked",
+      "intent": "existing_patient",
+      "summary": "Existing patient rescheduling from Wednesday to Friday.",
+      "appointment": {
+        "date": "2026-11-21",
+        "time": "10:30",
+        "type": "Check-up",
+        "practitioner": "Dr Rebecca Foster",
+        "action": "rescheduled"
+      },
+      "recording_available": true,
+      "sentiment": "positive"
+    },
+    {
+      "id": "c028",
+      "started_at": "2026-11-16T19:04:17+11:00",
+      "duration_seconds": 31,
+      "caller_number": "+61435662119",
+      "caller_name": "Natalie Evans",
+      "outcome": "cancelled",
+      "intent": "cancellation",
+      "summary": "Cancelled Thursday 14:00. Travelling for work. Will call back to rebook.",
+      "appointment": {
+        "date": "2026-11-20",
+        "time": "14:00",
+        "type": "Clean",
+        "practitioner": "Dr Mark Bennett",
+        "action": "cancelled"
+      },
+      "recording_available": true,
+      "sentiment": "neutral"
+    },
+    {
+      "id": "c029",
+      "started_at": "2026-11-16T20:38:02+11:00",
+      "duration_seconds": 67,
+      "caller_number": "+61447290163",
+      "caller_name": "Kevin Turner",
+      "outcome": "booked",
+      "intent": "new_patient",
+      "summary": "New patient. Chipped a tooth on the weekend, not painful but wants it looked at.",
+      "appointment": {
+        "date": "2026-11-18",
+        "time": "08:00",
+        "type": "Emergency assessment",
+        "practitioner": "Dr Rebecca Foster"
+      },
+      "recording_available": true,
+      "sentiment": "neutral",
+      "flagged": "priority"
+    },
+    {
+      "id": "c030",
+      "started_at": "2026-11-17T06:52:44+11:00",
+      "duration_seconds": 43,
+      "caller_number": "+61402883517",
+      "caller_name": "Hannah Moore",
+      "outcome": "booked",
+      "intent": "existing_patient",
+      "summary": "Existing patient, routine booking before work.",
+      "appointment": {
+        "date": "2026-12-02",
+        "time": "17:00",
+        "type": "Check-up and clean",
+        "practitioner": "Dr Mark Bennett"
+      },
+      "recording_available": true,
+      "sentiment": "positive"
+    },
+    {
+      "id": "c031",
+      "started_at": "2026-11-17T07:52:11+11:00",
+      "duration_seconds": 58,
+      "caller_number": "+61421665338",
+      "caller_name": "Michael Brown",
+      "outcome": "message_taken",
+      "intent": "billing_query",
+      "summary": "Second call about the same invoice dispute. Has not received a callback since Friday evening. Increasingly frustrated.",
+      "appointment": null,
+      "recording_available": true,
+      "sentiment": "negative",
+      "flagged": "complaint",
+      "repeat_caller": true
+    }
+  ]
+}
