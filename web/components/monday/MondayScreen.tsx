@@ -1,5 +1,5 @@
 'use client';
-import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { buildMonday, type ActionItem, type Booking, type CallRow, type WeekendData } from '@/lib/monday';
 import { CallButton, StatusPill, TAGS, type Status } from './ActionCard';
 
@@ -26,9 +26,6 @@ const titleOf = (a: ActionItem) => (a.category === 'optional' ? 'Optional: offer
 
 export default function MondayScreen({ raw }: { raw: WeekendData }) {
   const safe = true;
-  const [noRec, setNoRec] = useState(false);
-  const [noNames, setNoNames] = useState(false);
-  const [empty, setEmpty] = useState(false);
   const [statuses, setStatuses] = useState<Statuses>({});
   const [filter, setFilter] = useState<Filter>('all');
   const [loc, setLoc] = useState<{ view: ViewId; id: string | null }>({ view: 'appointments', id: null });
@@ -41,10 +38,7 @@ export default function MondayScreen({ raw }: { raw: WeekendData }) {
   }, []);
   useEffect(() => { if (!revealed.size) return; const t = setTimeout(() => setRevealed(new Set()), 15000); return () => clearTimeout(t); }, [revealed]);
 
-  const view = useMemo(() => {
-    const calls = empty ? [] : raw.calls.map((c, i) => ({ ...c, recording_available: noRec ? false : c.recording_available, caller_name: noNames && i % 2 === 0 ? null : c.caller_name }));
-    return buildMonday({ ...raw, calls });
-  }, [raw, noRec, noNames, empty]);
+  const view = buildMonday(raw);
   const { actions, bookings, calls, potentialOpenSlots, dataIssues } = view;
 
   const st = (id: string): Status => statuses[id] ?? 'new';
@@ -95,13 +89,6 @@ export default function MondayScreen({ raw }: { raw: WeekendData }) {
         {loc.view === 'actions' && <Actions {...ctx} sel={loc.id} />}
         {loc.view === 'calls' && <Calls {...ctx} sel={loc.id} filter={filter} setFilter={setFilter} dataIssues={dataIssues} />}
 
-        <fieldset className="mon-stress">
-          <legend>Stress test</legend>
-          <label><input type="checkbox" checked={noRec} onChange={(e) => setNoRec(e.target.checked)} /> No recordings</label>
-          <label><input type="checkbox" checked={noNames} onChange={(e) => setNoNames(e.target.checked)} /> Missing names</label>
-          <label><input type="checkbox" checked={empty} onChange={(e) => setEmpty(e.target.checked)} /> Empty weekend</label>
-        </fieldset>
-        <p className="footer">Demo data from Call Hero brief. Names shown as first name + initial. Clinical details are withheld from this screen.</p>
       </main>
     </div>
   );
