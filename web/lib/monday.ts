@@ -59,7 +59,7 @@ export interface CallRow {
 
 export interface Slot { date: string; time: string; practitioner?: string; label: string; freedBy: string; freedByCallId: string }
 
-export type BookingStatus = 'Recorded' | 'Verify' | 'Priority' | 'Practitioner note';
+export type BookingStatus = 'Recorded' | 'Rescheduled' | 'Rebooked' | 'Verify' | 'Priority' | 'Practitioner note';
 export interface Booking {
   callId: string;
   /** Counter-safe: first name + initial. */
@@ -366,8 +366,8 @@ export function buildMonday(data: WeekendData): MondayView {
     let status: BookingStatus = 'Recorded'; let reason: string | undefined;
     if (closedDay) { status = 'Verify'; reason = `clinic closed ${DAYS[d]}`; }
     else if (atClose) { status = 'Verify'; reason = 'at closing time'; }
-    else if (a.action === 'rescheduled') { status = 'Verify'; reason = 'rescheduled'; }
-    else if (cancelledBefore) { status = 'Verify'; reason = 'moved from cancelled'; }
+    else if (a.action === 'rescheduled') status = 'Rescheduled';
+    else if (cancelledBefore) status = 'Rebooked';
     else if (c.flagged === 'priority') status = 'Priority';
     else if (c.flagged === 'note_for_practitioner') status = 'Practitioner note';
     return {

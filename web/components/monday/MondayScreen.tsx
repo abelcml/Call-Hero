@@ -166,8 +166,8 @@ function Appointments({ safe, st, view, actionFor, first, moreCount, sel, slots,
               {bookings.map((b) => {
                 const a = actionFor(b.callId); const s = a ? st(a.id) : null;
                 const handled = s === 'handled';
-                const tone = handled ? 'ok' : b.status === 'Verify' ? 'warn' : b.status === 'Priority' ? 'bad' : b.status === 'Practitioner note' ? 'info' : 'ok';
-                const label = handled ? 'Handled' : b.status === 'Verify' ? `Verify: ${b.reason}` : b.status;
+                const tone = handled ? 'ok' : b.status === 'Verify' ? 'warn' : b.status === 'Priority' || b.status === 'Practitioner note' ? 'info' : 'ok';
+                const label = handled ? 'Handled' : b.status === 'Verify' ? `Needs review: ${b.reason}` : b.status === 'Priority' ? 'Priority booking' : b.status;
                 return (
                   <li key={b.callId} id={`rec-${b.callId}`} className={`mon-row bt-${tone}${sel === b.callId ? ' is-sel' : ''}`}>
                     <div className="mon-rt num">{b.label.split(' ').slice(0, 2).join(' ')}<span>{b.label.split(' ').slice(2).join(' ')}</span></div>
@@ -179,7 +179,7 @@ function Appointments({ safe, st, view, actionFor, first, moreCount, sel, slots,
                     <div className="mon-rs">
                       <span className={`mon-st st-${tone}`}>{label}</span>
                       {a && !handled && s === 'progress' && <StatusPill s="progress" />}
-                      {handled && b.status === 'Verify' && <span className="mon-b3">was: Verify — {b.reason}</span>}
+                      {handled && b.status === 'Verify' && <span className="mon-b3">was: Needs review — {b.reason}</span>}
                     </div>
                     <div className="mon-rl">
                       {a ? <a className="mon-lnk" href={`#actions/${a.id}`}>Staff action →</a> : <span className="mon-norec">No staff action</span>}

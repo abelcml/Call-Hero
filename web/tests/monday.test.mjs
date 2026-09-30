@@ -26,3 +26,13 @@ test('unresolved callers are follow-ups, not automatic matches', () => {
   assert.ok(view.actions.some((action) => action.category === 'urgent' && action.callIds.includes('c019')));
   assert.ok(!view.candidateActions.some((action) => action.callIds.includes('c017')));
 });
+
+test('routine booking changes are not flagged for manual verification', () => {
+  const view = buildMonday(withAdminSummaries(fixture));
+  const statusFor = (callId) => view.bookings.find((booking) => booking.callId === callId)?.status;
+  assert.equal(statusFor('c027'), 'Rescheduled');
+  assert.equal(statusFor('c023'), 'Rebooked');
+  assert.equal(statusFor('c010'), 'Verify');
+  assert.equal(statusFor('c030'), 'Verify');
+  assert.equal(statusFor('c029'), 'Priority');
+});
